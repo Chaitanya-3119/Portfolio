@@ -53,29 +53,17 @@ const products: Product[] = [
     ],
   },
   {
-    name: "Donor Care Cell",
+    name: "Donor Care Cell (DRM)",
     domain: "drm.harekrishnavizag.org",
-    status: "Admin",
+    status: "Admin & Live",
     accent: "var(--color-accent)",
     icon: Shield,
     description:
-      "Behind the scenes of both sites. One admin login that manages every donation made across Harekrisna Vizag and MakonisSoft, plus the call-from-laptop flow.",
+      "Behind the scenes of both sites. Central admin managing every donation across Harekrisna Vizag and MakonisSoft, plus the automated laptop-to-phone calling system.",
     links: [
       { label: "Admin login", url: "https://drm.harekrishnavizag.org", icon: ExternalLink },
-      { label: "API", url: "https://api.drm.harekrishnavizag.org", icon: ExternalLink },
-    ],
-  },
-  {
-    name: "DRM — Remote Contact Manager",
-    domain: "drm.harekrishnavizag.org",
-    status: "Live",
-    accent: "#9a7bff",
-    icon: Phone,
-    description:
-      "The phone-side service of the donor-care cell. Install the DRM APK on a phone, then a call started from your laptop opens on that phone — no SIM swap, no manual dialing.",
-    links: [
       { label: "Install DRM APK", url: "https://drm.harekrishnavizag.org/drm.apk", icon: ExternalLink },
-      { label: "Admin login", url: "https://drm.harekrishnavizag.org", icon: ExternalLink },
+      { label: "API", url: "https://api.drm.harekrishnavizag.org", icon: ExternalLink },
     ],
   },
   {
