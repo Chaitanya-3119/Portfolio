@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import type { Model } from "mongoose";
 import dbConnect, { isDbConfigured } from "@/lib/mongodb";
 import {
   Project,
@@ -20,7 +21,11 @@ import {
   fallbackTestimonials,
 } from "@/lib/fallback-data";
 
-const models: Record<string, any> = {
+// The models share one CRUD surface but carry different document types, so the
+// map is typed against a single loose document shape rather than `any`.
+type CollectionModel = Model<Record<string, unknown>>;
+
+const models = {
   projects: Project,
   skills: Skill,
   experiences: Experience,
@@ -28,9 +33,9 @@ const models: Record<string, any> = {
   blogs: Blog,
   testimonials: Testimonial,
   profile: Profile,
-};
+} as unknown as Record<string, CollectionModel>;
 
-const fallbackDataMap: Record<string, any> = {
+const fallbackDataMap: Record<string, unknown> = {
   projects: fallbackProjects,
   skills: fallbackSkills,
   experiences: fallbackExperiences,
@@ -90,8 +95,9 @@ export async function POST(
     return NextResponse.json({ error: "Invalid collection" }, { status: 400 });
   }
 
+  const body = (await req.json()) as Record<string, unknown>;
+
   if (!isDbConfigured) {
-    const body = await req.json();
     return NextResponse.json(
       { ...body, _id: "demo-" + Date.now() },
       { status: 201 }
@@ -100,7 +106,6 @@ export async function POST(
 
   try {
     await dbConnect();
-    const body = await req.json();
     const item = await Model.create(body);
     return NextResponse.json(item, { status: 201 });
   } catch (error) {
@@ -125,21 +130,21 @@ export async function PUT(
     return NextResponse.json({ error: "Invalid collection" }, { status: 400 });
   }
 
+  const body = (await req.json()) as Record<string, unknown>;
+
   if (!isDbConfigured) {
-    const body = await req.json();
     return NextResponse.json({ ...body, _id: body._id || "demo-" + Date.now() });
   }
 
   try {
     await dbConnect();
-    const body = await req.json();
     const { _id, ...updateData } = body;
     const item = await Model.findByIdAndUpdate(_id, updateData, { new: true });
     if (!item) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
     return NextResponse.json(item);
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: "Failed to update" }, { status: 500 });
   }
 }
@@ -173,7 +178,7 @@ export async function DELETE(
     }
     await Model.findByIdAndDelete(id);
     return NextResponse.json({ success: true });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: "Failed to delete" }, { status: 500 });
   }
 }

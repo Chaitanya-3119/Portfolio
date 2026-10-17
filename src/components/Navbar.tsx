@@ -1,277 +1,204 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import {
-  Menu,
-  X,
-  ChevronDown,
-} from "lucide-react";
-import { Github, Linkedin, Twitter } from "@/components/Icons";
+import { useEffect, useState } from "react";
+import { Menu, X, ArrowUpRight } from "lucide-react";
+import type { NavLink } from "@/lib/nav";
 
-const navLinks = [
-  { name: "Home", href: "#home" },
-  { name: "About", href: "#about" },
-  { name: "Skills", href: "#skills" },
-  { name: "Projects", href: "#projects" },
-  { name: "Experience", href: "#experience" },
-  { name: "Blog", href: "#blog" },
-  { name: "Testimonials", href: "#testimonials" },
-  { name: "Contact", href: "#contact" },
-];
-
-export default function Navbar() {
-  const [isOpen, setIsOpen] = useState(false);
+export default function Navbar({
+  links,
+  email,
+  currentPath = "/",
+}: {
+  links: NavLink[];
+  email: string;
+  currentPath?: string;
+}) {
+  const onHome = currentPath === "/";
+  const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [activeSection, setActiveSection] = useState("home");
+  const [active, setActive] = useState("");
+  const [progress, setProgress] = useState(0);
+
+  const toHref = (href: string) =>
+    onHome && href.startsWith("/#") ? href.slice(1) : href;
+
+  const isActive = (href: string) => {
+    if (href === "/articles") return currentPath.startsWith("/articles");
+    return onHome && active === href.replace("/#", "");
+  };
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
+    let frame = 0;
 
-      // Determine active section
-      const sections = navLinks.map((l) => l.href.replace("#", ""));
-      for (let i = sections.length - 1; i >= 0; i--) {
-        const el = document.getElementById(sections[i]);
-        if (el) {
-          const rect = el.getBoundingClientRect();
-          if (rect.top <= 120) {
-            setActiveSection(sections[i]);
-            break;
-          }
+    const update = () => {
+      frame = 0;
+      const y = window.scrollY;
+      setScrolled(y > 12);
+
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      setProgress(max > 0 ? Math.min(y / max, 1) : 0);
+
+      let current = "";
+      for (const link of links) {
+        if (!link.href.startsWith("/#")) continue;
+        const el = document.getElementById(link.href.slice(2));
+        if (el && el.getBoundingClientRect().top <= 180) {
+          current = link.href.slice(2);
         }
       }
+      setActive(current);
     };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+    const onScroll = () => {
+      if (frame) return;
+      frame = window.requestAnimationFrame(update);
+    };
+
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      if (frame) window.cancelAnimationFrame(frame);
+    };
+  }, [links]);
+
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+    };
+  }, [open]);
 
   return (
     <>
-      <motion.nav
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-          scrolled
-            ? "glass py-3"
-            : "bg-transparent py-5"
-        }`}
-        style={
-          scrolled
-            ? {
-                backgroundColor: "rgba(10, 10, 15, 0.88)",
-                backdropFilter: "blur(20px)",
-                WebkitBackdropFilter: "blur(20px)",
-                borderBottom: "1px solid rgba(255,255,255,0.08)",
-                boxShadow: "0 10px 30px rgba(0,0,0,0.5)",
-              }
-            : {}
-        }
-      >
-        <div className="container" style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          {/* Logo */}
-          <Link
-            href="#home"
-            style={{
-              fontSize: "1.5rem",
-              fontWeight: 800,
-              textDecoration: "none",
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-            }}
-          >
-            <span
-              style={{
-                width: "36px",
-                height: "36px",
-                borderRadius: "10px",
-                background: "linear-gradient(135deg, #6c63ff, #00d4ff)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: "1.1rem",
-                fontWeight: 900,
-                color: "#fff",
-              }}
-            >
-              C
-            </span>
-            <span className="gradient-text" style={{ letterSpacing: "-0.02em" }}>
-              haitanya
-            </span>
-          </Link>
+      <div
+        aria-hidden="true"
+        className="scroll-progress fixed inset-x-0 top-0 z-[60]"
+        style={{ transform: `scaleX(${progress})` }}
+      />
 
-          {/* Desktop Navigation */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-            }}
-            className="desktop-nav"
-          >
-            {navLinks.map((link) => (
+      <header className="fixed inset-x-0 top-0 z-50 pt-3 sm:pt-4">
+        <div className="wrap">
+          <div className={`nav-pill ${scrolled ? "is-scrolled" : ""}`}>
+            <Link
+              href={onHome ? "#top" : "/"}
+              aria-label="Dasari Chaitanya — home"
+              className="flex shrink-0 items-center gap-2.5 no-underline"
+            >
+              <span className="monogram" aria-hidden="true">
+                DC
+              </span>
+              <span
+                className="hidden text-[13px] font-semibold tracking-[-0.01em] sm:block"
+                style={{ color: "var(--color-paper)" }}
+              >
+                Dasari Chaitanya
+              </span>
+            </Link>
+
+            <nav aria-label="Primary" className="hidden lg:block">
+              <ul className="flex items-center gap-0.5 list-none">
+                {links.map((link) => {
+                  const href = toHref(link.href);
+                  const current = isActive(link.href);
+                  return (
+                    <li key={link.href}>
+                      <Link
+                        href={href}
+                        aria-current={current ? "page" : undefined}
+                        className={`nav-link ${current ? "is-active" : ""}`}
+                      >
+                        {link.name}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </nav>
+
+            <div className="flex items-center gap-2">
               <Link
-                key={link.name}
-                href={link.href}
-                style={{
-                  padding: "8px 16px",
-                  borderRadius: "8px",
-                  fontSize: "0.9rem",
-                  fontWeight: 500,
-                  textDecoration: "none",
-                  transition: "all 0.3s ease",
-                  color:
-                    activeSection === link.href.replace("#", "")
-                      ? "#6c63ff"
-                      : "#a0a0b8",
-                  background:
-                    activeSection === link.href.replace("#", "")
-                      ? "rgba(108, 99, 255, 0.1)"
-                      : "transparent",
-                }}
+                href={toHref("/#contact")}
+                className="btn btn-solid hidden !py-2 !text-[13px] sm:inline-flex"
               >
-                {link.name}
+                Let&apos;s talk
               </Link>
-            ))}
-          </div>
-
-          {/* Social + Mobile Toggle */}
-          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-            <div className="desktop-nav" style={{ display: "flex", gap: "8px" }}>
-              <a
-                href="https://github.com/chaitanya"
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  width: "36px",
-                  height: "36px",
-                  borderRadius: "8px",
-                  border: "1px solid rgba(255,255,255,0.06)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: "#a0a0b8",
-                  transition: "all 0.3s",
-                  textDecoration: "none",
-                }}
+              <button
+                type="button"
+                onClick={() => setOpen(true)}
+                aria-expanded={open}
+                aria-controls="mobile-menu"
+                aria-label="Open menu"
+                className="nav-icon-button lg:hidden"
               >
-                <Github size={16} />
-              </a>
-              <a
-                href="https://linkedin.com/in/chaitanya"
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  width: "36px",
-                  height: "36px",
-                  borderRadius: "8px",
-                  border: "1px solid rgba(255,255,255,0.06)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: "#a0a0b8",
-                  transition: "all 0.3s",
-                  textDecoration: "none",
-                }}
-              >
-                <Linkedin size={16} />
-              </a>
+                <Menu size={18} />
+              </button>
             </div>
-
-            <button
-              className="mobile-toggle"
-              onClick={() => setIsOpen(!isOpen)}
-              style={{
-                display: "none",
-                width: "40px",
-                height: "40px",
-                borderRadius: "10px",
-                border: "1px solid rgba(255,255,255,0.06)",
-                background: "rgba(255,255,255,0.03)",
-                color: "#f0f0f5",
-                cursor: "pointer",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              {isOpen ? <X size={20} /> : <Menu size={20} />}
-            </button>
           </div>
         </div>
-      </motion.nav>
+      </header>
 
-      {/* Mobile Menu */}
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
-            className="glass"
-            style={{
-              position: "fixed",
-              top: "70px",
-              left: "16px",
-              right: "16px",
-              zIndex: 49,
-              borderRadius: "16px",
-              padding: "24px",
-              display: "flex",
-              flexDirection: "column",
-              gap: "4px",
-            }}
-          >
-            {navLinks.map((link, i) => (
-              <motion.div
-                key={link.name}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.05 }}
-              >
-                <Link
-                  href={link.href}
-                  onClick={() => setIsOpen(false)}
-                  style={{
-                    display: "block",
-                    padding: "12px 16px",
-                    borderRadius: "10px",
-                    fontSize: "1rem",
-                    fontWeight: 500,
-                    textDecoration: "none",
-                    color:
-                      activeSection === link.href.replace("#", "")
-                        ? "#6c63ff"
-                        : "#a0a0b8",
-                    background:
-                      activeSection === link.href.replace("#", "")
-                        ? "rgba(108, 99, 255, 0.1)"
-                        : "transparent",
-                  }}
-                >
-                  {link.name}
-                </Link>
-              </motion.div>
-            ))}
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {open && (
+        <div
+          id="mobile-menu"
+          className="fixed inset-0 z-[70] lg:hidden"
+          style={{ backgroundColor: "var(--color-ink)" }}
+        >
+          <div className="wrap flex h-16 items-center justify-between">
+            <span className="monogram" aria-hidden="true">
+              DC
+            </span>
+            <button
+              type="button"
+              onClick={() => setOpen(false)}
+              aria-label="Close menu"
+              className="nav-icon-button"
+            >
+              <X size={18} />
+            </button>
+          </div>
 
-      <style jsx global>{`
-        @media (max-width: 900px) {
-          .desktop-nav {
-            display: none !important;
-          }
-          .mobile-toggle {
-            display: flex !important;
-          }
-        }
-      `}</style>
+          <nav aria-label="Primary" className="wrap mt-6">
+            <ul className="list-none">
+              {links.map((link, i) => (
+                <li key={link.href} style={{ borderTop: "1px solid var(--color-line)" }}>
+                  <Link
+                    href={toHref(link.href)}
+                    onClick={() => setOpen(false)}
+                    className="flex items-baseline justify-between gap-4 py-4 no-underline"
+                    style={{ color: "var(--color-paper)" }}
+                  >
+                    <span className="font-serif text-[clamp(2rem,9vw,2.75rem)] leading-none">
+                      {link.name}
+                    </span>
+                    <span className="mono">{String(i + 1).padStart(2, "0")}</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
+          <div className="wrap mt-10">
+            <a
+              href={`mailto:${email}`}
+              className="mono inline-flex items-center gap-1.5 py-2 no-underline"
+              style={{ color: "var(--color-fog)" }}
+            >
+              {email}
+              <ArrowUpRight size={12} aria-hidden="true" />
+            </a>
+          </div>
+        </div>
+      )}
     </>
   );
 }

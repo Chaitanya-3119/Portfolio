@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { LogIn, Mail, Lock, Loader2 } from "lucide-react";
 
 export default function AdminLogin() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -22,7 +24,8 @@ export default function AdminLogin() {
       });
 
       if (res.ok) {
-        window.location.href = "/admin/dashboard";
+        router.push("/admin/dashboard");
+        router.refresh();
       } else {
         const data = await res.json();
         setError(data.error || "Login failed");

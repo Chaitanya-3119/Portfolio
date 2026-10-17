@@ -1,70 +1,49 @@
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
-import About from "@/components/About";
-import Skills from "@/components/Skills";
 import Projects from "@/components/Projects";
-import ExperienceSection from "@/components/Experience";
-import EducationSection from "@/components/Education";
-import BlogSection from "@/components/Blog";
-import Testimonials from "@/components/Testimonials";
+import About from "@/components/About";
+import Stack from "@/components/Stack";
+import Experience from "@/components/Experience";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import dbConnect, { isDbConfigured } from "@/lib/mongodb";
-import {
-  Project,
-  Skill,
-  Experience,
-  Education,
-  Blog,
-  Testimonial,
-  Profile,
-} from "@/lib/models";
+import { primaryNav } from "@/lib/nav";
+import { Project, Skill, Experience as ExperienceModel, Education, Profile } from "@/lib/models";
 import {
   fallbackProfile,
   fallbackProjects,
   fallbackSkills,
   fallbackExperiences,
   fallbackEducation,
-  fallbackBlogs,
-  fallbackTestimonials,
 } from "@/lib/fallback-data";
 
 async function getPortfolioData() {
-  if (!isDbConfigured) {
-    return {
-      profile: fallbackProfile,
-      projects: fallbackProjects,
-      skills: fallbackSkills,
-      experiences: fallbackExperiences,
-      education: fallbackEducation,
-      blogs: fallbackBlogs,
-      testimonials: fallbackTestimonials,
-    };
-  }
+  const fallback = {
+    profile: fallbackProfile,
+    projects: fallbackProjects,
+    skills: fallbackSkills,
+    experiences: fallbackExperiences,
+    education: fallbackEducation,
+  };
+
+  if (!isDbConfigured) return fallback;
 
   try {
     await dbConnect();
 
-    const [
-      projects,
-      skills,
-      experiences,
-      education,
-      blogs,
-      testimonials,
-      profile,
-    ] = await Promise.all([
-      Project.find().sort({ order: 1 }).lean(),
-      Skill.find().sort({ order: 1 }).lean(),
-      Experience.find().sort({ order: 1 }).lean(),
-      Education.find().sort({ order: 1 }).lean(),
-      Blog.find({ published: true }).sort({ createdAt: -1 }).lean(),
-      Testimonial.find().sort({ order: 1 }).lean(),
-      Profile.findOne().lean(),
-    ]);
+    const [projects, skills, experiences, education, profile] =
+      await Promise.all([
+        Project.find().sort({ order: 1 }).lean(),
+        Skill.find().sort({ order: 1 }).lean(),
+        ExperienceModel.find().sort({ order: 1 }).lean(),
+        Education.find().sort({ order: 1 }).lean(),
+        Profile.findOne().lean(),
+      ]);
 
     return {
-      profile: profile ? JSON.parse(JSON.stringify(profile)) : fallbackProfile,
+      profile: profile
+        ? { ...fallbackProfile, ...JSON.parse(JSON.stringify(profile)) }
+        : fallbackProfile,
       projects:
         projects && projects.length > 0
           ? JSON.parse(JSON.stringify(projects))
@@ -81,47 +60,36 @@ async function getPortfolioData() {
         education && education.length > 0
           ? JSON.parse(JSON.stringify(education))
           : fallbackEducation,
-      blogs:
-        blogs && blogs.length > 0
-          ? JSON.parse(JSON.stringify(blogs))
-          : fallbackBlogs,
-      testimonials:
-        testimonials && testimonials.length > 0
-          ? JSON.parse(JSON.stringify(testimonials))
-          : fallbackTestimonials,
     };
   } catch (error) {
-    console.log("Using fallback data (DB not connected or query error):", error);
-    return {
-      profile: fallbackProfile,
-      projects: fallbackProjects,
-      skills: fallbackSkills,
-      experiences: fallbackExperiences,
-      education: fallbackEducation,
-      blogs: fallbackBlogs,
-      testimonials: fallbackTestimonials,
-    };
+    console.error("Falling back to local content:", error);
+    return fallback;
   }
 }
 
 export default async function Home() {
   const data = await getPortfolioData();
-
   return (
     <>
-      <Navbar />
-      <main>
-        <Hero profile={data.profile} />
-        <About profile={data.profile} />
-        <Skills skills={data.skills} />
+      <Navbar links={primaryNav} email={data.profile.email} />
+      <main id="main" className="relative z-[1]">
+        <Hero profile={data.profile} projects={data.projects} />
         <Projects projects={data.projects} />
-        <ExperienceSection experiences={data.experiences} />
-        <EducationSection education={data.education} />
-        <BlogSection blogs={data.blogs} />
-        <Testimonials testimonials={data.testimonials} />
-        <Contact />
+        <About profile={data.profile} />
+        <Stack skills={data.skills} />
+        <Experience
+          experiences={data.experiences}
+          education={data.education}
+        />
+        <Contact profile={data.profile} />
       </main>
-      <Footer />
+      <Footer
+        name={data.profile.shortName ?? data.profile.name}
+        email={data.profile.email}
+        availability={data.profile.availability}
+        links={primaryNav}
+        socialLinks={data.profile.socialLinks}
+      />
     </>
   );
 }

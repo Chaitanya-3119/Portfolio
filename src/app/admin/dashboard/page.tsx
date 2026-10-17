@@ -1,15 +1,14 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import {
-  LayoutDashboard,
   FolderKanban,
   Layers,
   Briefcase,
   GraduationCap,
   PenLine,
   MessageSquareQuote,
-  Mail,
   User,
   LogOut,
   Plus,
@@ -18,7 +17,6 @@ import {
   Save,
   X,
   Loader2,
-  ChevronRight,
 } from "lucide-react";
 
 type CollectionName =
@@ -34,6 +32,37 @@ interface NavItem {
   name: string;
   key: CollectionName;
   icon: React.ReactNode;
+}
+
+// Shape shared by every collection the dashboard edits. Values are loosely typed
+// because each collection has its own fields, but the fields we render are known.
+type FormValue = string | number | boolean;
+
+type AdminItem = {
+  _id?: string;
+  title?: string;
+  name?: string;
+  company?: string;
+  institution?: string;
+  description?: string;
+  position?: string;
+  degree?: string;
+  excerpt?: string;
+  content?: string;
+  tagline?: string;
+  socialLinks?: Record<string, string>;
+  stats?: Record<string, number>;
+  [key: string]: unknown;
+};
+
+type FormState = Record<string, FormValue>;
+
+function toFormValue(value: unknown): FormValue {
+  if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
+    return value;
+  }
+  if (Array.isArray(value)) return value.join(", ");
+  return value == null ? "" : String(value);
 }
 
 const navItems: NavItem[] = [
@@ -177,43 +206,65 @@ function labelToKey(label: string): string {
 }
 
 export default function AdminDashboard() {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<CollectionName>("projects");
-  const [items, setItems] = useState<any[]>([]);
+  const [items, setItems] = useState<AdminItem[]>([]);
   const [loading, setLoading] = useState(false);
-  const [editingItem, setEditingItem] = useState<any>(null);
+  const [editingItem, setEditingItem] = useState<AdminItem | null>(null);
   const [isCreating, setIsCreating] = useState(false);
-  const [formData, setFormData] = useState<Record<string, any>>({});
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [formData, setFormData] = useState<FormState>({});
+  const [sidebarOpen] = useState(true);
+
+  const loadItems = useCallback(async (): Promise<AdminItem[]> => {
+    const res = await fetch(`/api/admin/${activeTab}`);
+    if (!res.ok) return [];
+    const data: unknown = await res.json();
+    return Array.isArray(data) ? data : data ? [data as AdminItem] : [];
+  }, [activeTab]);
 
   const fetchItems = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/admin/${activeTab}`);
-      if (res.ok) {
-        const data = await res.json();
-        setItems(Array.isArray(data) ? data : data ? [data] : []);
-      }
+      setItems(await loadItems());
     } catch (err) {
       console.error("Failed to fetch:", err);
     } finally {
       setLoading(false);
     }
-  }, [activeTab]);
+  }, [loadItems]);
 
+  // Load on mount and whenever the collection changes. The fetch is awaited
+  // before touching state so the effect never triggers a cascading render.
   useEffect(() => {
-    fetchItems();
-  }, [fetchItems]);
+    let active = true;
+    (async () => {
+      try {
+        const next = await loadItems();
+        if (active) setItems(next);
+      } catch (err) {
+        console.error("Failed to fetch:", err);
+      } finally {
+        if (active) setLoading(false);
+      }
+    })();
+    return () => {
+      active = false;
+    };
+  }, [loadItems]);
 
   const handleSave = async () => {
     setLoading(true);
     try {
       // Transform form data
-      const payload: Record<string, any> = {};
+      const payload: Record<string, unknown> & {
+        socialLinks?: Record<string, unknown>;
+        stats?: Record<string, unknown>;
+      } = {};
       const fields = fieldConfigs[activeTab];
 
       for (const field of fields) {
         const key = labelToKey(field.label);
-        let value = formData[key];
+        let value: unknown = formData[key];
 
         if (field.label.includes("comma separated") && typeof value === "string") {
           value = value.split(",").map((s: string) => s.trim()).filter(Boolean);
@@ -275,10 +326,10 @@ export default function AdminDashboard() {
     }
   };
 
-  const startEditing = (item: any) => {
+  const startEditing = (item: AdminItem) => {
     setEditingItem(item);
     setIsCreating(false);
-    const data: Record<string, any> = {};
+    const data: FormState = {};
     const fields = fieldConfigs[activeTab];
 
     for (const field of fields) {
@@ -293,9 +344,7 @@ export default function AdminDashboard() {
           continue;
         }
       }
-      let val = item[key];
-      if (Array.isArray(val)) val = val.join(", ");
-      data[key] = val ?? "";
+      data[key] = toFormValue(item[key]);
     }
     setFormData(data);
   };
@@ -387,6 +436,7 @@ export default function AdminDashboard() {
             key={item.key}
             onClick={() => {
               setActiveTab(item.key);
+              setLoading(true);
               cancelEdit();
             }}
             style={{
@@ -420,7 +470,8 @@ export default function AdminDashboard() {
           <button
             onClick={() => {
               document.cookie = "admin-token=; path=/; max-age=0";
-              window.location.href = "/admin";
+              router.push("/admin");
+              router.refresh();
             }}
             style={{
               display: "flex",
@@ -573,7 +624,7 @@ export default function AdminDashboard() {
                       </label>
                       <textarea
                         rows={4}
-                        value={formData[key] || ""}
+                        value={String(formData[key] ?? "")}
                         onChange={(e) =>
                           setFormData({ ...formData, [key]: e.target.value })
                         }
@@ -605,7 +656,7 @@ export default function AdminDashboard() {
                     </label>
                     <input
                       type={field.type}
-                      value={formData[key] || ""}
+                      value={String(formData[key] ?? "")}
                       onChange={(e) =>
                         setFormData({
                           ...formData,
@@ -715,9 +766,9 @@ export default function AdminDashboard() {
                         item.content?.substring(0, 100) ||
                         item.tagline ||
                         ""}
-                      {(item.description?.length > 100 ||
-                        item.excerpt?.length > 100 ||
-                        item.content?.length > 100) &&
+                      {((item.description?.length ?? 0) > 100 ||
+                        (item.excerpt?.length ?? 0) > 100 ||
+                        (item.content?.length ?? 0) > 100) &&
                         "..."}
                     </div>
                   </div>
@@ -742,7 +793,7 @@ export default function AdminDashboard() {
                     </button>
                     {activeTab !== "profile" && (
                       <button
-                        onClick={() => handleDelete(item._id)}
+                        onClick={() => item._id && handleDelete(item._id)}
                         style={{
                           width: "36px",
                           height: "36px",

@@ -1,242 +1,171 @@
-// Fallback data used when MongoDB is not connected or no data exists
-// This ensures the portfolio looks great even without a database
+// Content used when MongoDB isn't configured (the default for this site).
+// Everything here is editable in one place; see CONTENT.md for the checklist.
+//
+// Rule of thumb: no dead links, no invented employers, no fake testimonials.
+// Anything that isn't filled in stays empty and its section hides itself.
 
 export const fallbackProfile = {
-  name: "Chaitanya",
+  name: "Dasari Chaitanya",
+  shortName: "Chaitanya",
   title: "Full Stack Developer",
-  tagline: "Building exceptional digital experiences with modern technologies",
-  bio: "I'm a passionate software developer who loves crafting elegant solutions to complex problems. With expertise spanning frontend and backend technologies, I build performant, scalable applications that deliver outstanding user experiences. I'm constantly learning and pushing the boundaries of what's possible with code.",
-  avatar: "/avatar.png",
-  email: "hello@chaitanya.dev",
+  headline: "I build web products that",
+  headlineEm: "ship.",
+  tagline:
+    "Full stack developer working across the interface, the API and the database. I've launched live products with real users — live air-quality reporting, an AI floor-plan generator, and an AI event recreator.",
+  bio: "I'm a full stack developer based in India. I like the whole path of a product: shaping the interface, wiring the API, modelling the data, then getting it deployed and actually working in someone's browser. Most of what I build is TypeScript and React on the front, Node and Mongo or Postgres behind it.",
   location: "India",
+  email: "chaitanya7101@gmail.com",
+  availability: "Open to work",
   socialLinks: {
-    github: "https://github.com/chaitanya",
-    linkedin: "https://linkedin.com/in/chaitanya",
-    twitter: "https://twitter.com/chaitanya",
-  },
-  stats: {
-    yearsExperience: 3,
-    projectsCompleted: 25,
-    happyClients: 15,
-    githubStars: 500,
+    github: "https://github.com/Chaitanya-3119",
+    linkedin: "",
+    twitter: "",
   },
 };
 
 export const fallbackProjects = [
   {
-    _id: "1",
-    title: "E-Commerce Platform",
-    slug: "ecommerce-platform",
+    _id: "ecogaurdian",
+    title: "EcoGuardian",
+    slug: "ecogaurdian",
     description:
-      "A full-featured e-commerce platform with real-time inventory management, payment processing, and an intuitive admin dashboard.",
-    image: "/projects/project1.jpg",
-    tags: ["Next.js", "TypeScript", "MongoDB", "Stripe", "Tailwind CSS"],
-    liveUrl: "https://example.com",
-    githubUrl: "https://github.com/chaitanya/ecommerce",
+      "A civic environmental platform: report local pollution, watch live air quality, join clean-up drives and earn rewards for taking part.",
+    image: "/projects/ecogaurdian.png",
+    tags: ["React", "TypeScript", "Node.js", "MongoDB", "Air quality API"],
+    liveUrl: "https://ecogaurdian.vercel.app",
+    githubUrl: "https://github.com/Chaitanya-3119/Ecogaurdian",
     featured: true,
     order: 1,
+    year: "2025 — 26",
+    role: "Full stack",
+    status: "Live",
+    highlights: [
+      "Live AQI and PM2.5 readings across Indian cities on a map",
+      "Pin-and-report issues with photo uploads and a moderation path",
+      "Community drives, a contributor leaderboard and redeemable eco points",
+    ],
   },
   {
-    _id: "2",
-    title: "AI Chat Application",
-    slug: "ai-chat-app",
+    _id: "gplan",
+    title: "GPlan",
+    slug: "gplan",
     description:
-      "Real-time chat application powered by AI with smart responses, language translation, and sentiment analysis capabilities.",
-    image: "/projects/project2.jpg",
-    tags: ["React", "Node.js", "Socket.io", "OpenAI", "Redis"],
-    liveUrl: "https://example.com",
-    githubUrl: "https://github.com/chaitanya/ai-chat",
+      "An AI floor-plan generator. Describe the space you need and it returns a plan you can work from, instead of a blank grid.",
+    image: "/projects/gplan.png",
+    tags: ["Next.js", "TypeScript", "AI", "Tailwind CSS"],
+    liveUrl: "https://gplan.vercel.app",
+    githubUrl: "https://github.com/Chaitanya-3119/Gplan",
     featured: true,
     order: 2,
+    year: "2025",
+    role: "Full stack",
+    status: "Live",
+    highlights: [
+      "Prompt to generated floor plan in one flow",
+      "Server-side generation with a typed API boundary",
+      "Responsive plan canvas that works on a phone",
+    ],
   },
   {
-    _id: "3",
-    title: "DevOps Dashboard",
-    slug: "devops-dashboard",
+    _id: "codecraft",
+    title: "CodeCraft — AI Event Recreator",
+    slug: "codecraft",
     description:
-      "Comprehensive monitoring dashboard for microservices with real-time metrics, alerting, and deployment management.",
-    image: "/projects/project3.jpg",
-    tags: ["Vue.js", "Python", "Docker", "Kubernetes", "Grafana"],
-    liveUrl: "https://example.com",
-    githubUrl: "https://github.com/chaitanya/devops-dash",
+      "Upload the photos from an event, describe what happened, and get a shareable AI recreation of it you can download.",
+    image: "",
+    tags: ["React", "TypeScript", "Vite", "AI"],
+    liveUrl: "",
+    githubUrl: "https://github.com/Chaitanya-3119/codecraft",
     featured: true,
     order: 3,
+    year: "2025",
+    role: "Frontend",
+    status: "Source available",
+    highlights: [
+      "Photo upload plus a guided description step",
+      "Generation, download and share in a single session",
+      "Responsive layout down to small screens",
+    ],
   },
   {
-    _id: "4",
-    title: "Social Media Analytics",
-    slug: "social-analytics",
+    _id: "accounting-package",
+    title: "Accounting Package",
+    slug: "accounting-package",
     description:
-      "Analytics platform that provides deep insights into social media performance with beautiful data visualizations.",
-    image: "/projects/project1.jpg",
-    tags: ["React", "D3.js", "FastAPI", "PostgreSQL"],
-    liveUrl: "https://example.com",
-    githubUrl: "https://github.com/chaitanya/social-analytics",
+      "A small accounting package for a business: ledgers, entries and the reports that go with them.",
+    image: "",
+    tags: ["PHP", "MySQL"],
+    liveUrl: "",
+    githubUrl: "https://github.com/Chaitanya-3119/accounting-package",
     featured: false,
     order: 4,
-  },
-  {
-    _id: "5",
-    title: "Task Management System",
-    slug: "task-management",
-    description:
-      "Collaborative project management tool with Kanban boards, time tracking, and team collaboration features.",
-    image: "/projects/project2.jpg",
-    tags: ["Next.js", "Prisma", "PostgreSQL", "WebSocket"],
-    liveUrl: "https://example.com",
-    githubUrl: "https://github.com/chaitanya/task-mgmt",
-    featured: false,
-    order: 5,
-  },
-  {
-    _id: "6",
-    title: "Crypto Portfolio Tracker",
-    slug: "crypto-tracker",
-    description:
-      "Real-time cryptocurrency portfolio tracker with price alerts, portfolio analytics, and market insights.",
-    image: "/projects/project3.jpg",
-    tags: ["React Native", "Node.js", "CoinGecko API", "Firebase"],
-    liveUrl: "https://example.com",
-    githubUrl: "https://github.com/chaitanya/crypto-tracker",
-    featured: false,
-    order: 6,
+    year: "2025",
+    role: "Full stack",
+    status: "Source available",
+    highlights: [],
   },
 ];
 
 export const fallbackSkills = [
-  { _id: "1", name: "React / Next.js", category: "Frontend", proficiency: 95, icon: "⚛️", order: 1 },
-  { _id: "2", name: "TypeScript", category: "Frontend", proficiency: 90, icon: "🔷", order: 2 },
-  { _id: "3", name: "JavaScript", category: "Frontend", proficiency: 95, icon: "💛", order: 3 },
-  { _id: "4", name: "HTML / CSS", category: "Frontend", proficiency: 95, icon: "🎨", order: 4 },
-  { _id: "5", name: "Tailwind CSS", category: "Frontend", proficiency: 90, icon: "🌊", order: 5 },
-  { _id: "6", name: "Node.js", category: "Backend", proficiency: 90, icon: "💚", order: 6 },
-  { _id: "7", name: "Python", category: "Backend", proficiency: 85, icon: "🐍", order: 7 },
-  { _id: "8", name: "MongoDB", category: "Backend", proficiency: 88, icon: "🍃", order: 8 },
-  { _id: "9", name: "PostgreSQL", category: "Backend", proficiency: 82, icon: "🐘", order: 9 },
-  { _id: "10", name: "Docker", category: "DevOps", proficiency: 80, icon: "🐳", order: 10 },
-  { _id: "11", name: "AWS / Cloud", category: "DevOps", proficiency: 78, icon: "☁️", order: 11 },
-  { _id: "12", name: "Git / GitHub", category: "DevOps", proficiency: 92, icon: "🔀", order: 12 },
+  { _id: "s1", name: "React", category: "Frontend", order: 1 },
+  { _id: "s2", name: "Next.js", category: "Frontend", order: 2 },
+  { _id: "s3", name: "TypeScript", category: "Frontend", order: 3 },
+  { _id: "s4", name: "JavaScript", category: "Frontend", order: 4 },
+  { _id: "s5", name: "Tailwind CSS", category: "Frontend", order: 5 },
+  { _id: "s6", name: "HTML / CSS", category: "Frontend", order: 6 },
+  { _id: "s7", name: "Node.js", category: "Backend", order: 1 },
+  { _id: "s8", name: "Express", category: "Backend", order: 2 },
+  { _id: "s9", name: "REST APIs", category: "Backend", order: 3 },
+  { _id: "s10", name: "PHP", category: "Backend", order: 4 },
+  { _id: "s11", name: "MongoDB", category: "Database", order: 1 },
+  { _id: "s12", name: "PostgreSQL", category: "Database", order: 2 },
+  { _id: "s13", name: "MySQL", category: "Database", order: 3 },
+  { _id: "s14", name: "Git & GitHub", category: "Tools", order: 1 },
+  { _id: "s15", name: "Vercel", category: "Tools", order: 2 },
+  { _id: "s16", name: "Postman", category: "Tools", order: 3 },
 ];
 
-export const fallbackExperiences = [
-  {
-    _id: "1",
-    company: "Tech Corp",
-    position: "Senior Full Stack Developer",
-    description:
-      "Led development of customer-facing applications serving 100k+ users. Architected microservices infrastructure and mentored junior developers. Improved application performance by 40%.",
-    startDate: "Jan 2023",
-    endDate: "",
-    current: true,
-    technologies: ["React", "Node.js", "MongoDB", "AWS", "Docker"],
-    order: 1,
-  },
-  {
-    _id: "2",
-    company: "StartupXYZ",
-    position: "Full Stack Developer",
-    description:
-      "Built and shipped the core product from scratch. Implemented real-time features, payment processing, and automated CI/CD pipelines. Grew the product to 50k active users.",
-    startDate: "Jun 2021",
-    endDate: "Dec 2022",
-    current: false,
-    technologies: ["Next.js", "TypeScript", "PostgreSQL", "Redis"],
-    order: 2,
-  },
-  {
-    _id: "3",
-    company: "Digital Agency",
-    position: "Frontend Developer",
-    description:
-      "Developed responsive web applications for enterprise clients. Created reusable component libraries and design systems that accelerated development by 30%.",
-    startDate: "Jan 2020",
-    endDate: "May 2021",
-    current: false,
-    technologies: ["React", "JavaScript", "SCSS", "Redux"],
-    order: 3,
-  },
-];
+// Blog posts and testimonials aren't shown on the site, but the admin panel still
+// manages those collections. Keep the arrays so its API keeps working.
+export const fallbackBlogs: unknown[] = [];
+export const fallbackTestimonials: unknown[] = [];
 
-export const fallbackEducation = [
+// Add real roles here — the Experience section stays hidden while this is empty.
+export const fallbackExperiences: {
+  _id: string;
+  company: string;
+  position: string;
+  description: string;
+  startDate: string;
+  endDate?: string;
+  current: boolean;
+  technologies: string[];
+  order: number;
+}[] = [];
+
+export const fallbackEducation: {
+  _id: string;
+  institution: string;
+  degree: string;
+  field: string;
+  startYear: string;
+  endYear?: string;
+  current: boolean;
+  grade?: string;
+  description?: string;
+  order: number;
+}[] = [
   {
-    _id: "1",
-    institution: "University of Technology",
-    degree: "Bachelor of Technology",
+    _id: "btech",
+    // Add your college and years here — they render as tags under the degree.
+    institution: "",
+    degree: "B.Tech",
     field: "Computer Science & Engineering",
-    startYear: "2016",
-    endYear: "2020",
-    current: false,
-    grade: "8.5 CGPA",
-    description: "Specialized in Software Engineering and Machine Learning. Active member of coding clubs and hackathon winner.",
+    startYear: "",
+    endYear: "",
+    current: true,
+    grade: "",
+    description: "",
     order: 1,
-  },
-];
-
-export const fallbackTestimonials = [
-  {
-    _id: "1",
-    name: "Alex Johnson",
-    position: "CTO",
-    company: "TechStartup Inc.",
-    content:
-      "One of the most talented developers I've worked with. Chaitanya consistently delivers high-quality code and brings creative solutions to complex problems. A true asset to any team.",
-    rating: 5,
-    order: 1,
-  },
-  {
-    _id: "2",
-    name: "Sarah Chen",
-    position: "Product Manager",
-    company: "Digital Solutions",
-    content:
-      "Working with Chaitanya was an absolute pleasure. His attention to detail and ability to translate design requirements into pixel-perfect implementations is remarkable.",
-    rating: 5,
-    order: 2,
-  },
-  {
-    _id: "3",
-    name: "Michael Park",
-    position: "Lead Developer",
-    company: "CloudTech",
-    content:
-      "Chaitanya has an exceptional understanding of both frontend and backend technologies. His code is clean, well-documented, and highly maintainable. Highly recommended!",
-    rating: 5,
-    order: 3,
-  },
-];
-
-export const fallbackBlogs = [
-  {
-    _id: "1",
-    title: "Building Scalable Applications with Next.js 14",
-    slug: "scalable-nextjs-14",
-    excerpt: "Learn how to build enterprise-grade applications using the latest features of Next.js 14, including Server Actions, Partial Prerendering, and more.",
-    coverImage: "/blog/blog1.png",
-    tags: ["Next.js", "React", "Performance"],
-    published: true,
-    readTime: 8,
-    createdAt: "2024-03-15T10:00:00Z",
-  },
-  {
-    _id: "2",
-    title: "The Art of Writing Clean TypeScript",
-    slug: "clean-typescript",
-    excerpt: "Explore best practices for writing maintainable TypeScript code with proper typing, generics, and design patterns that scale.",
-    coverImage: "/blog/blog2.png",
-    tags: ["TypeScript", "Best Practices", "Clean Code"],
-    published: true,
-    readTime: 6,
-    createdAt: "2024-02-20T10:00:00Z",
-  },
-  {
-    _id: "3",
-    title: "Docker for Full Stack Developers",
-    slug: "docker-fullstack",
-    excerpt: "A comprehensive guide to containerizing your full-stack applications with Docker, from development to production deployment.",
-    coverImage: "/blog/blog3.png",
-    tags: ["Docker", "DevOps", "Deployment"],
-    published: true,
-    readTime: 10,
-    createdAt: "2024-01-10T10:00:00Z",
   },
 ];

@@ -1,36 +1,55 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Portfolio
 
-## Getting Started
+Personal portfolio for Chaitanya — a single page with selected work, about,
+stack and contact. Built with Next.js (App Router), TypeScript and Tailwind CSS.
 
-First, run the development server:
+## Run it
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev      # http://localhost:3000
+npm run build && npm start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Editing content
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+All copy, projects and stack live in **`src/lib/fallback-data.ts`** — one file,
+no database required. Sections with no data (Experience, Education) hide
+themselves, so nothing renders half-finished.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+See [`CONTENT.md`](./CONTENT.md) for what still needs real details.
 
-## Learn More
+## Optional: database + admin
 
-To learn more about Next.js, take a look at the following resources:
+The site works fully without a database. If you want to edit content from the
+admin panel at `/admin`, copy the env template and fill it in:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+cp .env.example .env.local
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| Variable | Purpose |
+| --- | --- |
+| `NEXT_PUBLIC_SITE_URL` | Canonical URL used by metadata, OG image, sitemap |
+| `MONGODB_URI` | MongoDB connection string |
+| `ADMIN_EMAIL` / `ADMIN_PASSWORD` | Admin login and the seed script |
+| `NEXTAUTH_SECRET` | Secret used to sign the admin session cookie |
 
-## Deploy on Vercel
+With MongoDB configured, run `POST /api/admin/seed` once to create the admin
+user. Content read from Mongo overrides the local fallback; empty collections
+fall back automatically.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Structure
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+src/app/            layout, page, metadata routes (OG image, sitemap, robots)
+src/app/api/        portfolio data, auth, contact, admin CRUD
+src/app/admin/      login and dashboard
+src/components/     page sections; no animation library in the page shell
+src/lib/            content fallback, Mongoose models, auth, db helper
+```
+
+## Deploy
+
+Any Node host works. On Vercel, `VERCEL_PROJECT_PRODUCTION_URL` is used
+automatically; set `NEXT_PUBLIC_SITE_URL` if you serve it from a custom domain.

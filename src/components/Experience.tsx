@@ -1,10 +1,6 @@
-"use client";
+import Reveal from "@/components/Reveal";
 
-import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
-import { Briefcase } from "lucide-react";
-
-interface Experience {
+type ExperienceItem = {
   _id: string;
   company: string;
   position: string;
@@ -14,206 +10,174 @@ interface Experience {
   current: boolean;
   technologies: string[];
   order: number;
+};
+
+type EducationItem = {
+  _id: string;
+  institution: string;
+  degree: string;
+  field: string;
+  startYear: string;
+  endYear?: string;
+  current: boolean;
+  grade?: string;
+  description?: string;
+  order: number;
+};
+
+function dateRange(start: string, end: string | undefined, current: boolean) {
+  const tail = current ? "Present" : end;
+  if (!start && !tail) return "";
+  if (!tail) return start;
+  return `${start} — ${tail}`;
 }
 
-interface ExperienceProps {
-  experiences: Experience[];
-}
+export default function Experience({
+  experiences,
+  education,
+}: {
+  experiences: ExperienceItem[];
+  education: EducationItem[];
+}) {
+  if (experiences.length === 0 && education.length === 0) return null;
 
-export default function ExperienceSection({ experiences }: ExperienceProps) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const hasWork = experiences.length > 0;
 
   return (
     <section
       id="experience"
       className="section"
-      ref={ref}
-      style={{ background: "var(--color-bg-secondary)" }}
+      style={{ borderTop: "1px solid var(--color-line)" }}
     >
-      <div className="container">
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          style={{ textAlign: "center", marginBottom: "60px" }}
-        >
-          <span className="tag" style={{ marginBottom: "16px", display: "inline-flex" }}>
-            <Briefcase size={12} style={{ marginRight: "6px" }} />
-            Career
-          </span>
-          <h2 className="section-title">
-            Work <span className="gradient-text">Experience</span>
-          </h2>
-          <p className="section-subtitle">
-            My professional journey and roles I&apos;ve taken on
-          </p>
-        </motion.div>
-
-        {/* Timeline */}
-        <div
-          style={{
-            position: "relative",
-            maxWidth: "800px",
-            margin: "0 auto",
-          }}
-        >
-          {/* Timeline line */}
-          <div
-            style={{
-              position: "absolute",
-              left: "24px",
-              top: "0",
-              bottom: "0",
-              width: "2px",
-              background:
-                "linear-gradient(180deg, #6c63ff, #00d4ff, transparent)",
-            }}
-            className="timeline-line-el"
-          />
-
-          {experiences.map((exp, i) => (
-            <motion.div
-              key={exp._id}
-              initial={{ opacity: 0, x: -30 }}
-              animate={isInView ? { opacity: 1, x: 0 } : {}}
-              transition={{ duration: 0.5, delay: 0.15 * i }}
-              style={{
-                position: "relative",
-                paddingLeft: "64px",
-                marginBottom: "40px",
-              }}
-            >
-              {/* Timeline dot */}
-              <div
-                style={{
-                  position: "absolute",
-                  left: "19px",
-                  top: "24px",
-                  width: "12px",
-                  height: "12px",
-                  borderRadius: "50%",
-                  background: exp.current ? "#00e676" : "#6c63ff",
-                  border: "3px solid var(--color-bg-secondary)",
-                  boxShadow: `0 0 10px ${
-                    exp.current ? "rgba(0,230,118,0.5)" : "rgba(108,99,255,0.5)"
-                  }`,
-                  zIndex: 2,
-                }}
-              />
-
-              <div className="glass-card" style={{ padding: "28px" }}>
-                {/* Header */}
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    marginBottom: "12px",
-                    flexWrap: "wrap",
-                    gap: "8px",
-                  }}
-                >
-                  <div>
-                    <h3
-                      style={{
-                        fontSize: "1.2rem",
-                        fontWeight: 700,
-                        marginBottom: "4px",
-                      }}
-                    >
-                      {exp.position}
-                    </h3>
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "8px",
-                      }}
-                    >
-                      <span className="gradient-text" style={{ fontWeight: 600 }}>
-                        {exp.company}
-                      </span>
-                    </div>
-                  </div>
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "8px",
-                    }}
-                  >
-                    <span
-                      style={{
-                        padding: "4px 14px",
-                        borderRadius: "8px",
-                        background: exp.current
-                          ? "rgba(0,230,118,0.1)"
-                          : "rgba(108,99,255,0.08)",
-                        border: `1px solid ${
-                          exp.current
-                            ? "rgba(0,230,118,0.2)"
-                            : "rgba(108,99,255,0.15)"
-                        }`,
-                        fontSize: "0.8rem",
-                        color: exp.current ? "#00e676" : "#a0a0b8",
-                        fontWeight: 500,
-                      }}
-                    >
-                      {exp.startDate} — {exp.current ? "Present" : exp.endDate}
-                    </span>
-                  </div>
-                </div>
-
-                <p
-                  style={{
-                    color: "#a0a0b8",
-                    fontSize: "0.9rem",
-                    lineHeight: 1.8,
-                    marginBottom: "16px",
-                  }}
-                >
-                  {exp.description}
-                </p>
-
-                {/* Technologies */}
-                <div
-                  style={{
-                    display: "flex",
-                    flexWrap: "wrap",
-                    gap: "6px",
-                  }}
-                >
-                  {exp.technologies.map((tech) => (
-                    <span
-                      key={tech}
-                      style={{
-                        padding: "3px 10px",
-                        borderRadius: "6px",
-                        background: "rgba(108,99,255,0.08)",
-                        border: "1px solid rgba(108,99,255,0.15)",
-                        fontSize: "0.75rem",
-                        color: "#a0a0b8",
-                        fontWeight: 500,
-                      }}
-                    >
-                      {tech}
-                    </span>
-                  ))}
+      <div className="wrap">
+        {hasWork && (
+          <>
+            <Reveal>
+              <div className="header-row">
+                <div>
+                  <p className="eyebrow">Experience</p>
+                  <h2 className="h2 mt-4">Where I&apos;ve worked.</h2>
                 </div>
               </div>
-            </motion.div>
-          ))}
-        </div>
-      </div>
+            </Reveal>
 
-      <style jsx global>{`
-        @media (max-width: 768px) {
-          .timeline-line-el {
-            left: 12px !important;
-          }
-        }
-      `}</style>
+            <div>
+              {[...experiences]
+                .sort((a, b) => a.order - b.order)
+                .map((exp, i) => (
+                  <Reveal key={exp._id} index={i}>
+                    <article
+                      className="grid gap-3 py-7 md:grid-cols-[180px_1fr] md:gap-10"
+                      style={{ borderTop: "1px solid var(--color-line)" }}
+                    >
+                      <div className="mono md:pt-1">
+                        {dateRange(exp.startDate, exp.endDate, exp.current)}
+                      </div>
+                      <div>
+                        <h3 className="h3">
+                          {exp.position}
+                          <span style={{ color: "var(--color-fog)" }}> · </span>
+                          <span style={{ color: "var(--color-accent)" }}>
+                            {exp.company}
+                          </span>
+                        </h3>
+                        <p
+                          className="mt-3 max-w-[65ch] text-[0.95rem] leading-relaxed"
+                          style={{ color: "var(--color-fog)" }}
+                        >
+                          {exp.description}
+                        </p>
+                        {exp.technologies.length > 0 && (
+                          <ul className="mt-4 flex flex-wrap gap-1.5 list-none">
+                            {exp.technologies.map((tech) => (
+                              <li key={tech} className="tag">
+                                {tech}
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
+                    </article>
+                  </Reveal>
+                ))}
+            </div>
+          </>
+        )}
+
+        {education.length > 0 && (
+          <div className={hasWork ? "mt-20" : ""}>
+            <Reveal>
+              <div className="text-center">
+                <p className="eyebrow justify-center">Education</p>
+                <h2 className="h2 mt-4">Academic background</h2>
+              </div>
+            </Reveal>
+
+            <div className="mt-10 space-y-6">
+              {[...education]
+                .sort((a, b) => a.order - b.order)
+                .map((edu, i) => (
+                  <Reveal key={edu._id} index={i}>
+                    <article className="edu-card mx-auto max-w-2xl px-8 py-12 text-center">
+                      <p className="mono uppercase tracking-[0.18em]">
+                        {edu.current ? "In progress" : "Undergraduate degree"}
+                      </p>
+
+                      <h3 className="mt-5 font-serif text-[clamp(2.25rem,5vw,3rem)] leading-none tracking-[-0.03em]">
+                        {edu.degree}
+                      </h3>
+
+                      {edu.field && (
+                        <p
+                          className="mt-3 text-[1.05rem]"
+                          style={{ color: "var(--color-paper)" }}
+                        >
+                          {edu.field}
+                        </p>
+                      )}
+
+                      {(edu.institution ||
+                        edu.startYear ||
+                        edu.endYear ||
+                        edu.grade) && (
+                        <div className="mt-7 flex flex-wrap items-center justify-center gap-2">
+                          {edu.institution && (
+                            <span className="tag">{edu.institution}</span>
+                          )}
+                          {(edu.startYear || edu.endYear) && (
+                            <span className="tag">
+                              {dateRange(edu.startYear, edu.endYear, edu.current)}
+                            </span>
+                          )}
+                          {edu.grade && (
+                            <span
+                              className="tag"
+                              style={{
+                                borderColor: "rgba(216,255,62,0.35)",
+                                color: "var(--color-accent)",
+                              }}
+                            >
+                              {edu.grade}
+                            </span>
+                          )}
+                        </div>
+                      )}
+
+                      {edu.description && (
+                        <p
+                          className="mx-auto mt-6 max-w-[46ch] text-[0.92rem] leading-relaxed"
+                          style={{ color: "var(--color-fog)" }}
+                        >
+                          {edu.description}
+                        </p>
+                      )}
+                    </article>
+                  </Reveal>
+                ))}
+            </div>
+          </div>
+        )}
+      </div>
     </section>
   );
 }

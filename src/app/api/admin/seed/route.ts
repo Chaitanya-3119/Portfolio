@@ -1,10 +1,10 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import dbConnect from "@/lib/mongodb";
 import { Admin } from "@/lib/models";
 import bcrypt from "bcryptjs";
 
 // Seed admin user - only works if no admin exists
-export async function POST(req: NextRequest) {
+export async function POST() {
   try {
     await dbConnect();
 
