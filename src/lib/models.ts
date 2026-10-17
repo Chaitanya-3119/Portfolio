@@ -22,7 +22,7 @@ const ProjectSchema = new Schema<IProject>(
     slug: { type: String, required: true, unique: true },
     description: { type: String, required: true },
     longDescription: { type: String },
-    image: { type: String, required: true },
+    image: { type: String, default: "" },
     tags: [{ type: String }],
     liveUrl: { type: String },
     githubUrl: { type: String },
@@ -44,8 +44,8 @@ export interface ISkill extends Document {
 const SkillSchema = new Schema<ISkill>({
   name: { type: String, required: true },
   category: { type: String, required: true },
-  proficiency: { type: Number, required: true, min: 0, max: 100 },
-  icon: { type: String, required: true },
+  proficiency: { type: Number, default: 90, min: 0, max: 100 },
+  icon: { type: String, default: "⚡" },
   order: { type: Number, default: 0 },
 });
 
@@ -88,10 +88,10 @@ export interface IEducation extends Document {
 }
 
 const EducationSchema = new Schema<IEducation>({
-  institution: { type: String, required: true },
+  institution: { type: String, default: "" },
   degree: { type: String, required: true },
   field: { type: String, required: true },
-  startYear: { type: String, required: true },
+  startYear: { type: String, default: "" },
   endYear: { type: String },
   current: { type: Boolean, default: false },
   grade: { type: String },
@@ -151,6 +151,10 @@ const TestimonialSchema = new Schema<ITestimonial>({
 // ===== PROFILE MODEL =====
 export interface IProfile extends Document {
   name: string;
+  shortName?: string;
+  headline?: string;
+  headlineEm?: string;
+  availability?: string;
   title: string;
   tagline: string;
   bio: string;
@@ -176,10 +180,14 @@ export interface IProfile extends Document {
 
 const ProfileSchema = new Schema<IProfile>({
   name: { type: String, required: true },
+  shortName: { type: String, default: "" },
+  headline: { type: String, default: "" },
+  headlineEm: { type: String, default: "" },
+  availability: { type: String, default: "Open to work" },
   title: { type: String, required: true },
   tagline: { type: String, required: true },
   bio: { type: String, required: true },
-  avatar: { type: String, required: true },
+  avatar: { type: String, default: "" },
   resumeUrl: { type: String },
   email: { type: String, required: true },
   phone: { type: String },

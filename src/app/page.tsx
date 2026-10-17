@@ -17,6 +17,8 @@ import {
   fallbackEducation,
 } from "@/lib/fallback-data";
 
+export const instant = false;
+
 async function getPortfolioData() {
   const fallback = {
     profile: fallbackProfile,
