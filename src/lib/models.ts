@@ -12,6 +12,10 @@ export interface IProject extends Document {
   githubUrl?: string;
   featured: boolean;
   order: number;
+  year?: string;
+  role?: string;
+  status?: string;
+  highlights?: string[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -28,6 +32,10 @@ const ProjectSchema = new Schema<IProject>(
     githubUrl: { type: String },
     featured: { type: Boolean, default: false },
     order: { type: Number, default: 0 },
+    year: { type: String },
+    role: { type: String },
+    status: { type: String },
+    highlights: [{ type: String }],
   },
   { timestamps: true }
 );
