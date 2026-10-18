@@ -45,17 +45,15 @@ export async function POST() {
     // 2. Seed Profile
     const existingProfile = await Profile.findOne();
     if (!existingProfile) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { _id, ...profileData } = fallbackProfile as any;
       await Profile.create({
-        avatar: "/avatar.png",
+        ...fallbackProfile,
+        avatar: fallbackProfile.avatar || "/avatar.png",
         stats: {
           yearsExperience: 2,
           projectsCompleted: 6,
           happyClients: 10,
           githubStars: 15,
         },
-        ...profileData,
       });
     }
 
@@ -115,8 +113,9 @@ export async function POST() {
     }
 
     // 7. Seed Blogs
-    if ((await Blog.countDocuments()) === 0 && (fallbackBlogs as any[]).length > 0) {
-      const blogsToInsert = (fallbackBlogs as any[]).map((b) => {
+    const blogs = fallbackBlogs as { _id?: string; [key: string]: unknown }[];
+    if ((await Blog.countDocuments()) === 0 && blogs.length > 0) {
+      const blogsToInsert = blogs.map((b) => {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { _id, ...rest } = b;
         return rest;
@@ -125,8 +124,12 @@ export async function POST() {
     }
 
     // 8. Seed Testimonials
-    if ((await Testimonial.countDocuments()) === 0 && (fallbackTestimonials as any[]).length > 0) {
-      const testToInsert = (fallbackTestimonials as any[]).map((t) => {
+    const testimonials = fallbackTestimonials as {
+      _id?: string;
+      [key: string]: unknown;
+    }[];
+    if ((await Testimonial.countDocuments()) === 0 && testimonials.length > 0) {
+      const testToInsert = testimonials.map((t) => {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { _id, ...rest } = t;
         return rest;

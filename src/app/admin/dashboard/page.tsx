@@ -19,7 +19,6 @@ import {
   Loader2,
   Mail,
   Bell,
-  Check,
 } from "lucide-react";
 import ImageUpload from "@/components/ImageUpload";
 

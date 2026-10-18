@@ -1,3 +1,5 @@
+import nodemailer from "nodemailer";
+
 export interface NotificationPayload {
   name: string;
   email: string;
@@ -10,6 +12,7 @@ export interface NotificationStatus {
   telegram: boolean;
   discord: boolean;
   resend: boolean;
+  smtp: boolean;
   whatsapp: boolean;
   sms: boolean;
   anyConfigured: boolean;
@@ -26,6 +29,12 @@ export function getNotificationStatus(): NotificationStatus {
   );
   const discord = Boolean(process.env.DISCORD_WEBHOOK_URL);
   const resend = Boolean(process.env.RESEND_API_KEY);
+
+  // SMTP (Gmail or custom mail server)
+  const smtp = Boolean(
+    process.env.SMTP_USER &&
+      (process.env.SMTP_PASS || process.env.SMTP_PASSWORD)
+  );
 
   // WhatsApp can be configured either via CallMeBot (free instant) or Twilio WhatsApp
   const whatsappCallMeBot = Boolean(
@@ -51,11 +60,12 @@ export function getNotificationStatus(): NotificationStatus {
     telegram,
     discord,
     resend,
+    smtp,
     whatsapp,
     sms,
-    anyConfigured: telegram || discord || resend || whatsapp || sms,
+    anyConfigured: telegram || discord || resend || smtp || whatsapp || sms,
     recipientEmail:
-      process.env.NOTIFICATION_EMAIL || process.env.ADMIN_EMAIL || undefined,
+      process.env.NOTIFICATION_EMAIL || process.env.ADMIN_EMAIL || process.env.SMTP_USER || undefined,
     recipientPhone:
       process.env.CALLMEBOT_PHONE || process.env.NOTIFICATION_PHONE_NUMBER || undefined,
   };
@@ -151,6 +161,60 @@ async function sendDiscordNotification(payload: NotificationPayload) {
     throw new Error(`Discord error (${res.status}): ${errorText}`);
   }
 
+  return true;
+}
+
+/**
+ * Send email notification via Gmail / Custom SMTP (using nodemailer)
+ */
+async function sendSmtpNotification(payload: NotificationPayload) {
+  const user = process.env.SMTP_USER;
+  const pass = process.env.SMTP_PASS || process.env.SMTP_PASSWORD;
+  const to =
+    process.env.NOTIFICATION_EMAIL || process.env.ADMIN_EMAIL || user;
+
+  if (!user || !pass || !to) {
+    throw new Error(
+      "SMTP credentials not fully configured (need SMTP_USER, SMTP_PASS, NOTIFICATION_EMAIL)"
+    );
+  }
+
+  const host = process.env.SMTP_HOST || "smtp.gmail.com";
+  const port = Number(process.env.SMTP_PORT) || 465;
+  const secure = port === 465;
+
+  const transporter = nodemailer.createTransport({
+    host,
+    port,
+    secure,
+    auth: {
+      user,
+      pass,
+    },
+  });
+
+  const mailOptions = {
+    from: `"Portfolio Alert" <${user}>`,
+    to,
+    replyTo: payload.email,
+    subject: `[Portfolio Inquiry] ${payload.subject} (from ${payload.name})`,
+    text: `You received a new message on your portfolio:\n\nName: ${payload.name}\nEmail: ${payload.email}\nSubject: ${payload.subject}\n\nMessage:\n${payload.message}\n\nReceived at: ${new Date().toLocaleString()}`,
+    html: `
+      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; border: 1px solid #eaeaea; border-radius: 8px;">
+        <h2 style="color: #6366f1; margin-top: 0;">📬 New Message on Your Portfolio</h2>
+        <p style="margin: 4px 0;"><strong>From:</strong> ${escapeHtml(payload.name)} (&lt;<a href="mailto:${payload.email}">${payload.email}</a>&gt;)</p>
+        <p style="margin: 4px 0;"><strong>Subject:</strong> ${escapeHtml(payload.subject)}</p>
+        <div style="margin-top: 16px; padding: 16px; background: #f9f9fb; border-left: 4px solid #6366f1; border-radius: 4px;">
+          <p style="margin: 0; white-space: pre-wrap; font-size: 15px; line-height: 1.5; color: #333;">${escapeHtml(payload.message)}</p>
+        </div>
+        <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid #eaeaea;">
+          <a href="mailto:${payload.email}?subject=Re: ${encodeURIComponent(payload.subject)}" style="display: inline-block; background: #6366f1; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-weight: 500;">Reply directly to ${escapeHtml(payload.name)}</a>
+        </div>
+      </div>
+    `,
+  };
+
+  await transporter.sendMail(mailOptions);
   return true;
 }
 
@@ -336,6 +400,35 @@ export async function sendPortfolioNotification(payload: NotificationPayload) {
 
   const promises: Promise<void>[] = [];
 
+  // Gmail / SMTP Email
+  if (status.smtp) {
+    promises.push(
+      sendSmtpNotification(payload)
+        .then(() => {
+          results.smtp = { sent: true };
+        })
+        .catch((err) => {
+          results.smtp = { sent: false, error: err.message };
+          console.error("Gmail SMTP notification failed:", err.message);
+        })
+    );
+  }
+
+  // Resend Email API
+  if (status.resend && !status.smtp) {
+    promises.push(
+      sendResendNotification(payload)
+        .then(() => {
+          results.resend = { sent: true };
+        })
+        .catch((err) => {
+          results.resend = { sent: false, error: err.message };
+          console.error("Resend notification failed:", err.message);
+        })
+    );
+  }
+
+  // Telegram
   if (status.telegram) {
     promises.push(
       sendTelegramNotification(payload)
@@ -349,6 +442,7 @@ export async function sendPortfolioNotification(payload: NotificationPayload) {
     );
   }
 
+  // Discord
   if (status.discord) {
     promises.push(
       sendDiscordNotification(payload)
@@ -362,19 +456,7 @@ export async function sendPortfolioNotification(payload: NotificationPayload) {
     );
   }
 
-  if (status.resend) {
-    promises.push(
-      sendResendNotification(payload)
-        .then(() => {
-          results.resend = { sent: true };
-        })
-        .catch((err) => {
-          results.resend = { sent: false, error: err.message };
-          console.error("Resend notification failed:", err.message);
-        })
-    );
-  }
-
+  // WhatsApp
   if (status.whatsapp) {
     promises.push(
       sendWhatsAppNotification(payload)
@@ -388,6 +470,7 @@ export async function sendPortfolioNotification(payload: NotificationPayload) {
     );
   }
 
+  // SMS Text
   if (status.sms) {
     promises.push(
       sendSmsNotification(payload)

@@ -3,7 +3,6 @@ import {
   Globe,
   Briefcase,
   Shield,
-  Phone,
   ExternalLink,
   ArrowUpRight,
   LucideIcon,

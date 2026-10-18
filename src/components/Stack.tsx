@@ -4,7 +4,6 @@ type Skill = {
   _id: string;
   name: string;
   category: string;
-  proficiency?: number;
   order: number;
 };
 
@@ -65,19 +64,13 @@ export default function Stack({ skills }: { skills: Skill[] }) {
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {categories.map((category, i) => (
             <Reveal key={category} index={i}>
-              <div
-                className="flex h-full flex-col rounded-2xl p-5 sm:p-6"
-                style={{
-                  border: "1px solid var(--color-line)",
-                  background: "var(--color-ink-soft)",
-                }}
-              >
+              <div className="card flex h-full flex-col p-5 sm:p-6">
                 <div className="flex items-baseline justify-between gap-3">
                   <p className="mono uppercase tracking-[0.16em] text-[var(--color-paper)]">
                     {category}
                   </p>
                   <span className="mono text-[11px] text-[var(--color-fog-dim)]">
-                    {grouped.get(category)!.length}
+                    {String(grouped.get(category)!.length).padStart(2, "0")}
                   </span>
                 </div>
                 {CATEGORY_BLURB[category] && (
@@ -86,42 +79,15 @@ export default function Stack({ skills }: { skills: Skill[] }) {
                   </p>
                 )}
 
-                <ul className="mt-5 list-none space-y-4">
+                <ul className="mt-5 flex flex-wrap gap-2 list-none">
                   {grouped
                     .get(category)!
                     .sort((a, b) => a.order - b.order)
-                    .map((skill) => {
-                      const pct = skill.proficiency ?? 0;
-                      return (
-                        <li key={skill._id}>
-                          <div className="flex items-baseline justify-between gap-2">
-                            <span className="text-[15px] text-[var(--color-paper)]">
-                              {skill.name}
-                            </span>
-                            {skill.proficiency != null && (
-                              <span className="mono text-[11px] text-[var(--color-fog-dim)]">
-                                {pct}%
-                              </span>
-                            )}
-                          </div>
-                          {skill.proficiency != null && (
-                            <div
-                              className="mt-2 h-1 w-full overflow-hidden rounded-full"
-                              style={{ background: "rgba(255,255,255,0.06)" }}
-                            >
-                              <div
-                                className="h-full rounded-full"
-                                style={{
-                                  width: `${pct}%`,
-                                  background:
-                                    "linear-gradient(90deg, rgba(216,255,62,0.55), var(--color-accent))",
-                                }}
-                              />
-                            </div>
-                          )}
-                        </li>
-                      );
-                    })}
+                    .map((skill) => (
+                      <li key={skill._id}>
+                        <span className="tag text-[12px]">{skill.name}</span>
+                      </li>
+                    ))}
                 </ul>
               </div>
             </Reveal>
