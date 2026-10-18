@@ -179,7 +179,7 @@ export default function ContactForm() {
         <button
           type="submit"
           disabled={status === "loading"}
-          className="btn btn-solid inline-flex items-center gap-2"
+          className="btn btn-solid !py-2.5 !px-5 !text-[13px] inline-flex items-center gap-2"
         >
           {status === "loading" ? (
             <>

@@ -10,6 +10,7 @@ type AboutProfile = {
   location: string;
   email: string;
   avatar?: string;
+  availability?: string;
   socialLinks: { github?: string; linkedin?: string; twitter?: string };
 };
 
@@ -46,6 +47,30 @@ export default function About({ profile }: { profile: AboutProfile }) {
               )}
               <p className="eyebrow">About</p>
               <h2 className="h2 mt-4">Full stack, from schema to pixel.</h2>
+              {profile.availability && (
+                <p
+                  className="mono mt-5 inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-[11px] uppercase tracking-[0.14em]"
+                  style={{
+                    border: "1px solid var(--color-line-strong)",
+                    color: "var(--color-fog)",
+                  }}
+                >
+                  <span
+                    className="relative flex h-1.5 w-1.5"
+                    aria-hidden="true"
+                  >
+                    <span
+                      className="absolute inline-flex h-full w-full animate-ping rounded-full opacity-60"
+                      style={{ background: "var(--color-accent)" }}
+                    />
+                    <span
+                      className="relative inline-flex h-1.5 w-1.5 rounded-full"
+                      style={{ background: "var(--color-accent)" }}
+                    />
+                  </span>
+                  {profile.availability}
+                </p>
+              )}
             </div>
           </Reveal>
 

@@ -61,10 +61,19 @@ export default function Stack({ skills }: { skills: Skill[] }) {
           </div>
         </Reveal>
 
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <div
+          className="grid gap-px overflow-hidden rounded-2xl sm:grid-cols-2 lg:grid-cols-3"
+          style={{
+            background: "var(--color-line)",
+            border: "1px solid var(--color-line)",
+          }}
+        >
           {categories.map((category, i) => (
             <Reveal key={category} index={i}>
-              <div className="card flex h-full flex-col p-5 sm:p-6">
+              <div
+                className="flex h-full flex-col p-5 sm:p-6"
+                style={{ background: "var(--color-ink)" }}
+              >
                 <div className="flex items-baseline justify-between gap-3">
                   <p className="mono uppercase tracking-[0.16em] text-[var(--color-paper)]">
                     {category}
@@ -79,13 +88,25 @@ export default function Stack({ skills }: { skills: Skill[] }) {
                   </p>
                 )}
 
-                <ul className="mt-5 flex flex-wrap gap-2 list-none">
+                <ul className="mt-4 list-none">
                   {grouped
                     .get(category)!
                     .sort((a, b) => a.order - b.order)
-                    .map((skill) => (
-                      <li key={skill._id}>
-                        <span className="tag text-[12px]">{skill.name}</span>
+                    .map((skill, index) => (
+                      <li
+                        key={skill._id}
+                        className="group flex items-center gap-3 py-2"
+                        style={{ borderTop: "1px solid var(--color-line)" }}
+                      >
+                        <span className="mono w-5 shrink-0 text-[10px] text-[var(--color-fog-dim)] transition-colors group-hover:text-[var(--color-accent)]">
+                          {String(index + 1).padStart(2, "0")}
+                        </span>
+                        <span
+                          className="text-[14.5px] tracking-[-0.01em] transition-colors group-hover:text-[var(--color-accent)]"
+                          style={{ color: "var(--color-paper)" }}
+                        >
+                          {skill.name}
+                        </span>
                       </li>
                     ))}
                 </ul>

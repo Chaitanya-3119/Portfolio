@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Menu, X, ArrowUpRight } from "lucide-react";
 import type { NavLink } from "@/lib/nav";
@@ -94,9 +95,15 @@ export default function Navbar({
               aria-label="Dasari Chaitanya — home"
               className="flex shrink-0 items-center gap-2.5 no-underline"
             >
-              <span className="monogram" aria-hidden="true">
-                DC
-              </span>
+              <Image
+                src="/logo-nav.png"
+                alt=""
+                aria-hidden="true"
+                width={72}
+                height={32}
+                className="h-8 w-auto"
+                priority
+              />
               <span
                 className="hidden text-[13px] font-semibold tracking-[-0.01em] sm:block"
                 style={{ color: "var(--color-paper)" }}
@@ -154,9 +161,14 @@ export default function Navbar({
           style={{ backgroundColor: "var(--color-ink)" }}
         >
           <div className="wrap flex h-16 items-center justify-between">
-            <span className="monogram" aria-hidden="true">
-              DC
-            </span>
+            <Image
+              src="/logo-nav.png"
+              alt=""
+              aria-hidden="true"
+              width={72}
+              height={32}
+              className="h-8 w-auto"
+            />
             <button
               type="button"
               onClick={() => setOpen(false)}
