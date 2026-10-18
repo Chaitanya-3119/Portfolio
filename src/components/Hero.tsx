@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { ArrowUpRight, MapPin } from "lucide-react";
 import Reveal from "@/components/Reveal";
 
@@ -10,6 +11,7 @@ type HeroProfile = {
   location: string;
   email: string;
   availability?: string;
+  avatar?: string;
 };
 
 type HeroProject = {
@@ -55,9 +57,29 @@ export default function Hero({
         <div className="grid items-end gap-14 lg:grid-cols-[1.4fr_0.6fr] lg:gap-20">
           <div>
             <Reveal>
-              <p className="eyebrow">
-                {profile.name} · {profile.title}
-              </p>
+              <div className="flex items-center gap-4">
+                {profile.avatar && (
+                  <span
+                    className="relative inline-block shrink-0 overflow-hidden rounded-full"
+                    style={{
+                      width: 56,
+                      height: 56,
+                      border: "1px solid var(--color-line-strong)",
+                    }}
+                  >
+                    <Image
+                      src={profile.avatar}
+                      alt={profile.name}
+                      fill
+                      sizes="56px"
+                      className="h-full w-full object-cover"
+                    />
+                  </span>
+                )}
+                <p className="eyebrow">
+                  {profile.name} · {profile.title}
+                </p>
+              </div>
             </Reveal>
 
             <Reveal index={1}>

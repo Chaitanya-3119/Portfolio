@@ -67,6 +67,7 @@ export async function POST() {
         return {
           ...rest,
           image: p.image || `/projects/project${(idx % 3) + 1}.jpg`,
+          screenshots: p.screenshots ?? [],
         };
       });
       await Project.insertMany(projectsToInsert);
@@ -78,7 +79,6 @@ export async function POST() {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { _id, ...rest } = s;
         return {
-          proficiency: 90,
           icon: "⚡",
           ...rest,
         };

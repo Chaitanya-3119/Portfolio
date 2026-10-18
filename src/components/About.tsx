@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { MapPin, ArrowUpRight } from "lucide-react";
 import Reveal from "@/components/Reveal";
 import { Github, Linkedin, Twitter } from "@/components/Icons";
@@ -8,6 +9,7 @@ type AboutProfile = {
   bio: string;
   location: string;
   email: string;
+  avatar?: string;
   socialLinks: { github?: string; linkedin?: string; twitter?: string };
 };
 
@@ -24,6 +26,24 @@ export default function About({ profile }: { profile: AboutProfile }) {
         <div className="grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20">
           <Reveal>
             <div className="lg:sticky lg:top-28">
+              {profile.avatar && (
+                <span
+                  className="relative mb-6 block overflow-hidden rounded-2xl"
+                  style={{
+                    width: 180,
+                    height: 180,
+                    border: "1px solid var(--color-line-strong)",
+                  }}
+                >
+                  <Image
+                    src={profile.avatar}
+                    alt={profile.name}
+                    fill
+                    sizes="180px"
+                    className="h-full w-full object-cover"
+                  />
+                </span>
+              )}
               <p className="eyebrow">About</p>
               <h2 className="h2 mt-4">Full stack, from schema to pixel.</h2>
             </div>

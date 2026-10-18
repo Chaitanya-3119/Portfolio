@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import dbConnect from "@/lib/mongodb";
 import { Contact } from "@/lib/models";
+import { sendPortfolioNotification } from "@/lib/notifications";
 
 export async function POST(req: NextRequest) {
   try {
@@ -27,8 +28,16 @@ export async function POST(req: NextRequest) {
       });
     }
 
+    // Trigger instant notifications across configured channels (Telegram, Discord, Email)
+    await sendPortfolioNotification({
+      name,
+      email,
+      subject,
+      message,
+    });
+
     return NextResponse.json(
-      { success: true, message: "Message received!" },
+      { success: true, message: "Message received! I'll get back to you soon." },
       { status: 200 }
     );
   } catch {

@@ -17,7 +17,11 @@ import {
   Save,
   X,
   Loader2,
+  Mail,
+  Bell,
+  Check,
 } from "lucide-react";
+import ImageUpload from "@/components/ImageUpload";
 
 type CollectionName =
   | "projects"
@@ -26,7 +30,8 @@ type CollectionName =
   | "education"
   | "blogs"
   | "testimonials"
-  | "profile";
+  | "profile"
+  | "messages";
 
 interface NavItem {
   name: string;
@@ -50,6 +55,11 @@ type AdminItem = {
   excerpt?: string;
   content?: string;
   tagline?: string;
+  email?: string;
+  subject?: string;
+  message?: string;
+  read?: boolean;
+  createdAt?: string;
   socialLinks?: Record<string, string>;
   stats?: Record<string, number>;
   [key: string]: unknown;
@@ -73,6 +83,7 @@ const navItems: NavItem[] = [
   { name: "Education", key: "education", icon: <GraduationCap size={18} /> },
   { name: "Blog", key: "blogs", icon: <PenLine size={18} /> },
   { name: "Testimonials", key: "testimonials", icon: <MessageSquareQuote size={18} /> },
+  { name: "Messages", key: "messages", icon: <Mail size={18} /> },
 ];
 
 const fieldConfigs: Record<string, { label: string; type: string; required?: boolean }[]> = {
@@ -82,9 +93,14 @@ const fieldConfigs: Record<string, { label: string; type: string; required?: boo
     { label: "Description", type: "textarea", required: true },
     { label: "Long Description", type: "textarea" },
     { label: "Image URL", type: "text", required: true },
+    { label: "Screenshots (comma separated)", type: "text" },
     { label: "Tags (comma separated)", type: "text" },
     { label: "Live URL", type: "text" },
     { label: "GitHub URL", type: "text" },
+    { label: "Year", type: "text" },
+    { label: "Role", type: "text" },
+    { label: "Status", type: "text" },
+    { label: "Highlights (comma separated)", type: "text" },
     { label: "Featured", type: "checkbox" },
     { label: "Order", type: "number" },
   ],
@@ -152,6 +168,7 @@ const fieldConfigs: Record<string, { label: string; type: string; required?: boo
     { label: "Happy Clients", type: "number" },
     { label: "GitHub Stars", type: "number" },
   ],
+  messages: [],
 };
 
 function labelToKey(label: string): string {
@@ -161,9 +178,14 @@ function labelToKey(label: string): string {
     "Description": "description",
     "Long Description": "longDescription",
     "Image URL": "image",
+    "Screenshots (comma separated)": "screenshots",
     "Tags (comma separated)": "tags",
     "Live URL": "liveUrl",
     "GitHub URL": "githubUrl",
+    "Year": "year",
+    "Role": "role",
+    "Status": "status",
+    "Highlights (comma separated)": "highlights",
     "Featured": "featured",
     "Order": "order",
     "Name": "name",
@@ -214,6 +236,30 @@ export default function AdminDashboard() {
   const [isCreating, setIsCreating] = useState(false);
   const [formData, setFormData] = useState<FormState>({});
   const [sidebarOpen] = useState(true);
+  const [testingNotification, setTestingNotification] = useState(false);
+  const [notificationFeedback, setNotificationFeedback] = useState<string | null>(null);
+
+  const handleTestNotifications = async () => {
+    setTestingNotification(true);
+    setNotificationFeedback(null);
+    try {
+      const res = await fetch("/api/admin/notifications", { method: "POST" });
+      const data = await res.json();
+      if (!res.ok) {
+        setNotificationFeedback(data.message || data.error || "Failed to send test notification");
+      } else {
+        const channels = Object.keys(data.results || {}).join(", ");
+        setNotificationFeedback(
+          channels ? `Test notification sent via: ${channels}!` : "Notification test sent!"
+        );
+      }
+    } catch {
+      setNotificationFeedback("Failed to trigger test notification.");
+    } finally {
+      setTestingNotification(false);
+      setTimeout(() => setNotificationFeedback(null), 6000);
+    }
+  };
 
   const loadItems = useCallback(async (): Promise<AdminItem[]> => {
     const res = await fetch(`/api/admin/${activeTab}`);
@@ -523,7 +569,46 @@ export default function AdminDashboard() {
             </p>
           </div>
 
-          {activeTab !== "profile" && !isCreating && !editingItem && (
+          {activeTab === "messages" && (
+            <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+              {notificationFeedback && (
+                <span
+                  style={{
+                    fontSize: "0.8rem",
+                    color: "#818cf8",
+                    background: "rgba(99, 102, 241, 0.1)",
+                    padding: "6px 12px",
+                    borderRadius: "6px",
+                    border: "1px solid rgba(99, 102, 241, 0.2)",
+                  }}
+                >
+                  {notificationFeedback}
+                </span>
+              )}
+              <button
+                type="button"
+                onClick={handleTestNotifications}
+                disabled={testingNotification}
+                className="btn-secondary"
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  padding: "8px 16px",
+                  fontSize: "0.85rem",
+                }}
+              >
+                {testingNotification ? (
+                  <Loader2 size={16} style={{ animation: "spin 1s linear infinite" }} />
+                ) : (
+                  <Bell size={16} />
+                )}
+                <span>Test Notifications</span>
+              </button>
+            </div>
+          )}
+
+          {activeTab !== "profile" && activeTab !== "messages" && !isCreating && !editingItem && (
             <button onClick={startCreating} className="btn-primary">
               <Plus size={18} />
               Add New
@@ -637,6 +722,70 @@ export default function AdminDashboard() {
                     </div>
                   );
                 }
+                const isImageField =
+                  key === "image" ||
+                  key === "coverImage" ||
+                  key === "avatar" ||
+                  key === "companyLogo" ||
+                  field.label.toLowerCase().includes("image url") ||
+                  field.label.toLowerCase().includes("avatar url");
+
+                if (isImageField) {
+                  return (
+                    <div key={field.label} style={{ gridColumn: "1 / -1" }}>
+                      <ImageUpload
+                        label={field.label}
+                        value={String(formData[key] ?? "")}
+                        onChange={(url) => setFormData({ ...formData, [key]: url })}
+                        required={field.required}
+                        folder={`portfolio/${activeTab}`}
+                      />
+                    </div>
+                  );
+                }
+
+                if (key === "screenshots") {
+                  return (
+                    <div key={field.label} style={{ gridColumn: "1 / -1" }}>
+                      <label
+                        style={{
+                          display: "block",
+                          fontSize: "0.75rem",
+                          color: "#6b6b80",
+                          marginBottom: "6px",
+                          textTransform: "uppercase",
+                          letterSpacing: "0.05em",
+                        }}
+                      >
+                        {field.label}
+                      </label>
+                      <input
+                        type="text"
+                        value={String(formData[key] ?? "")}
+                        onChange={(e) =>
+                          setFormData({ ...formData, [key]: e.target.value })
+                        }
+                        placeholder="https://res.cloudinary.com/... , https://res.cloudinary.com/..."
+                        style={inputStyle}
+                      />
+                      <div style={{ marginTop: "8px" }}>
+                        <ImageUpload
+                          label="Upload screenshot to Cloudinary"
+                          value=""
+                          onChange={(newUrl) => {
+                            if (!newUrl) return;
+                            const existing = String(formData[key] ?? "").trim();
+                            const updated = existing ? `${existing}, ${newUrl}` : newUrl;
+                            setFormData({ ...formData, [key]: updated });
+                          }}
+                          folder="portfolio/screenshots"
+                          placeholder="Upload an image to append its Cloudinary URL above"
+                        />
+                      </div>
+                    </div>
+                  );
+                }
+
                 return (
                   <div key={field.label}>
                     <label
@@ -736,84 +885,200 @@ export default function AdminDashboard() {
         ) : (
           !isCreating &&
           !editingItem && (
-            <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-              {items.map((item) => (
-                <div
-                  key={item._id}
-                  className="glass-card"
-                  style={{
-                    padding: "20px 24px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                  }}
-                >
-                  <div style={{ flex: 1 }}>
+            activeTab === "messages" ? (
+              <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+                {items.map((item) => (
+                  <div
+                    key={item._id}
+                    className="glass-card"
+                    style={{
+                      padding: "20px 24px",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "12px",
+                      border: "1px solid rgba(255, 255, 255, 0.08)",
+                    }}
+                  >
                     <div
                       style={{
-                        fontWeight: 600,
-                        fontSize: "1rem",
-                        marginBottom: "4px",
+                        display: "flex",
+                        alignItems: "flex-start",
+                        justifyContent: "space-between",
+                        gap: "16px",
+                        flexWrap: "wrap",
                       }}
                     >
-                      {item.title || item.name || item.company || item.institution || "Untitled"}
+                      <div>
+                        <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
+                          <span style={{ fontWeight: 700, fontSize: "1.05rem", color: "#fff" }}>
+                            {item.name || "Anonymous"}
+                          </span>
+                          {item.email && (
+                            <a
+                              href={`mailto:${item.email}`}
+                              style={{
+                                fontSize: "0.85rem",
+                                color: "#818cf8",
+                                textDecoration: "underline",
+                              }}
+                            >
+                              {item.email}
+                            </a>
+                          )}
+                        </div>
+                        <div
+                          style={{
+                            fontSize: "0.9rem",
+                            fontWeight: 600,
+                            color: "#cbd5e1",
+                            marginTop: "4px",
+                          }}
+                        >
+                          Subject: {item.subject || "(No subject)"}
+                        </div>
+                        {item.createdAt && (
+                          <div style={{ fontSize: "0.75rem", color: "#64748b", marginTop: "2px" }}>
+                            Received: {new Date(item.createdAt).toLocaleString()}
+                          </div>
+                        )}
+                      </div>
+
+                      <div style={{ display: "flex", gap: "8px", flexShrink: 0 }}>
+                        {item.email && (
+                          <a
+                            href={`mailto:${item.email}?subject=Re: ${encodeURIComponent(item.subject || "Your message on my portfolio")}`}
+                            className="btn-secondary"
+                            style={{
+                              padding: "6px 12px",
+                              fontSize: "0.8rem",
+                              display: "inline-flex",
+                              alignItems: "center",
+                              gap: "6px",
+                              textDecoration: "none",
+                            }}
+                          >
+                            <Mail size={14} />
+                            Reply
+                          </a>
+                        )}
+                        <button
+                          onClick={() => item._id && handleDelete(item._id)}
+                          style={{
+                            width: "36px",
+                            height: "36px",
+                            borderRadius: "8px",
+                            border: "1px solid rgba(255,107,107,0.2)",
+                            background: "rgba(255,107,107,0.08)",
+                            color: "#ff6b6b",
+                            cursor: "pointer",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                          }}
+                          title="Delete message"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
                     </div>
-                    <div style={{ fontSize: "0.8rem", color: "#6b6b80" }}>
-                      {item.description?.substring(0, 100) ||
-                        item.position ||
-                        item.degree ||
-                        item.excerpt?.substring(0, 100) ||
-                        item.content?.substring(0, 100) ||
-                        item.tagline ||
-                        ""}
-                      {((item.description?.length ?? 0) > 100 ||
-                        (item.excerpt?.length ?? 0) > 100 ||
-                        (item.content?.length ?? 0) > 100) &&
-                        "..."}
+
+                    <div
+                      style={{
+                        padding: "14px 18px",
+                        background: "rgba(0, 0, 0, 0.3)",
+                        borderRadius: "8px",
+                        fontSize: "0.9rem",
+                        color: "#e2e8f0",
+                        whiteSpace: "pre-wrap",
+                        lineHeight: 1.6,
+                        border: "1px solid rgba(255, 255, 255, 0.05)",
+                      }}
+                    >
+                      {item.message || "(Empty message)"}
                     </div>
                   </div>
+                ))}
+              </div>
+            ) : (
+              <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                {items.map((item) => (
+                  <div
+                    key={item._id}
+                    className="glass-card"
+                    style={{
+                      padding: "20px 24px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <div style={{ flex: 1 }}>
+                      <div
+                        style={{
+                          fontWeight: 600,
+                          fontSize: "1rem",
+                          marginBottom: "4px",
+                        }}
+                      >
+                        {item.title || item.name || item.company || item.institution || "Untitled"}
+                      </div>
+                      <div style={{ fontSize: "0.8rem", color: "#6b6b80" }}>
+                        {item.description?.substring(0, 100) ||
+                          item.position ||
+                          item.degree ||
+                          item.excerpt?.substring(0, 100) ||
+                          item.content?.substring(0, 100) ||
+                          item.tagline ||
+                          ""}
+                        {((item.description?.length ?? 0) > 100 ||
+                          (item.excerpt?.length ?? 0) > 100 ||
+                          (item.content?.length ?? 0) > 100) &&
+                          "..."}
+                      </div>
+                    </div>
 
-                  <div style={{ display: "flex", gap: "8px", flexShrink: 0 }}>
-                    <button
-                      onClick={() => startEditing(item)}
-                      style={{
-                        width: "36px",
-                        height: "36px",
-                        borderRadius: "8px",
-                        border: "1px solid rgba(108,99,255,0.2)",
-                        background: "rgba(108,99,255,0.08)",
-                        color: "#6c63ff",
-                        cursor: "pointer",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <Edit3 size={14} />
-                    </button>
-                    {activeTab !== "profile" && (
+                    <div style={{ display: "flex", gap: "8px", flexShrink: 0 }}>
                       <button
-                        onClick={() => item._id && handleDelete(item._id)}
+                        onClick={() => startEditing(item)}
                         style={{
                           width: "36px",
                           height: "36px",
                           borderRadius: "8px",
-                          border: "1px solid rgba(255,107,107,0.2)",
-                          background: "rgba(255,107,107,0.08)",
-                          color: "#ff6b6b",
+                          border: "1px solid rgba(108,99,255,0.2)",
+                          background: "rgba(108,99,255,0.08)",
+                          color: "#6c63ff",
                           cursor: "pointer",
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
                         }}
                       >
-                        <Trash2 size={14} />
+                        <Edit3 size={14} />
                       </button>
-                    )}
+                      {activeTab !== "profile" && (
+                        <button
+                          onClick={() => item._id && handleDelete(item._id)}
+                          style={{
+                            width: "36px",
+                            height: "36px",
+                            borderRadius: "8px",
+                            border: "1px solid rgba(255,107,107,0.2)",
+                            background: "rgba(255,107,107,0.08)",
+                            color: "#ff6b6b",
+                            cursor: "pointer",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                          }}
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )
           )
         )}
       </main>

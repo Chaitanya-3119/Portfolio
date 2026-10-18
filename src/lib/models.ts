@@ -16,6 +16,7 @@ export interface IProject extends Document {
   role?: string;
   status?: string;
   highlights?: string[];
+  screenshots?: string[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -36,6 +37,7 @@ const ProjectSchema = new Schema<IProject>(
     role: { type: String },
     status: { type: String },
     highlights: [{ type: String }],
+    screenshots: [{ type: String }],
   },
   { timestamps: true }
 );

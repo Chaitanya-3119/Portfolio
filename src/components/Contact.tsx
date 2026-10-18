@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Check, Copy, ArrowUpRight } from "lucide-react";
 import Reveal from "@/components/Reveal";
 import { Github, Linkedin, Twitter } from "@/components/Icons";
+import ContactForm from "@/components/ContactForm";
 
 type ContactProfile = {
   email: string;
@@ -53,6 +54,9 @@ export default function Contact({ profile }: { profile: ContactProfile }) {
                 Open to full-time roles and select freelance work. Email is the
                 fastest way to reach me — it comes straight to my inbox.
               </p>
+            </Reveal>
+            <Reveal index={3} className="mt-8">
+              <ContactForm />
             </Reveal>
           </div>
 
