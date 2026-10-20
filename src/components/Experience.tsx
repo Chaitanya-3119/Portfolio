@@ -136,40 +136,22 @@ export default function Experience({
                         </p>
                       )}
 
-                      {(edu.institution ||
-                        edu.startYear ||
-                        edu.endYear ||
-                        edu.grade) && (
-                        <div className="mt-7 flex flex-wrap items-center justify-center gap-2">
-                          {edu.institution && (
-                            <span className="tag">{edu.institution}</span>
-                          )}
+                      {(edu.startYear || edu.endYear || edu.grade) && (
+                        <div className="mt-7 flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
                           {(edu.startYear || edu.endYear) && (
-                            <span className="tag">
+                            <span className="mono text-[var(--color-fog)]">
                               {dateRange(edu.startYear, edu.endYear, edu.current)}
                             </span>
                           )}
                           {edu.grade && (
                             <span
-                              className="tag"
-                              style={{
-                                borderColor: "rgba(216,255,62,0.35)",
-                                color: "var(--color-accent)",
-                              }}
+                              className="mono"
+                              style={{ color: "var(--color-accent)" }}
                             >
                               {edu.grade}
                             </span>
                           )}
                         </div>
-                      )}
-
-                      {edu.description && (
-                        <p
-                          className="mx-auto mt-6 max-w-[46ch] text-[0.92rem] leading-relaxed"
-                          style={{ color: "var(--color-fog)" }}
-                        >
-                          {edu.description}
-                        </p>
                       )}
                     </article>
                   </Reveal>

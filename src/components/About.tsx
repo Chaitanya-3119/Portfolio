@@ -14,12 +14,33 @@ type AboutProfile = {
   socialLinks: { github?: string; linkedin?: string; twitter?: string };
 };
 
-export default function About({ profile }: { profile: AboutProfile }) {
+export default function About({
+  profile,
+  projectCount = 0,
+}: {
+  profile: AboutProfile;
+  projectCount?: number;
+}) {
   const socials = [
     { label: "GitHub", href: profile.socialLinks.github, Icon: Github },
     { label: "LinkedIn", href: profile.socialLinks.linkedin, Icon: Linkedin },
     { label: "Twitter", href: profile.socialLinks.twitter, Icon: Twitter },
   ].filter((s) => Boolean(s.href));
+
+  const highlights = [
+    {
+      stat: projectCount > 0 ? String(projectCount).padStart(2, "0") : "04",
+      label: "Live products in production, not demos",
+    },
+    {
+      stat: "Full stack",
+      label: "Interface, API, database and deploy — end to end",
+    },
+    {
+      stat: "TypeScript",
+      label: "React & Next.js up front, Node & Postgres behind",
+    },
+  ];
 
   return (
     <section id="about" className="section" style={{ borderTop: "1px solid var(--color-line)" }}>
@@ -82,6 +103,24 @@ export default function About({ profile }: { profile: AboutProfile }) {
             </Reveal>
 
             <Reveal index={2}>
+              <ul className="mt-9 grid gap-px overflow-hidden rounded-2xl sm:grid-cols-3 list-none" style={{ background: "var(--color-line)", border: "1px solid var(--color-line)" }}>
+                {highlights.map(({ stat, label }) => (
+                  <li key={label} className="p-5" style={{ background: "var(--color-ink)" }}>
+                    <p
+                      className="font-serif text-[1.6rem] leading-none tracking-[-0.02em]"
+                      style={{ color: "var(--color-accent)" }}
+                    >
+                      {stat}
+                    </p>
+                    <p className="mt-2.5 text-[13px] leading-snug" style={{ color: "var(--color-fog)" }}>
+                      {label}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            </Reveal>
+
+            <Reveal index={3}>
               <dl
                 className="mt-10 grid gap-px overflow-hidden rounded-2xl sm:grid-cols-2"
                 style={{ background: "var(--color-line)", border: "1px solid var(--color-line)" }}
@@ -112,7 +151,7 @@ export default function About({ profile }: { profile: AboutProfile }) {
             </Reveal>
 
             {socials.length > 0 && (
-              <Reveal index={3}>
+              <Reveal index={4}>
                 <ul className="mt-8 flex flex-wrap gap-3 list-none">
                   {socials.map(({ label, href, Icon }) => (
                     <li key={label}>

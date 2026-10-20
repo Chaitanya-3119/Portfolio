@@ -77,7 +77,7 @@ export default async function Home() {
       <main id="main" className="relative z-[1]">
         <Hero profile={data.profile} projects={data.projects} />
         <Projects projects={data.projects} />
-        <About profile={data.profile} />
+        <About profile={data.profile} projectCount={data.projects.length} />
         <Stack skills={data.skills} />
         <Experience
           experiences={data.experiences}

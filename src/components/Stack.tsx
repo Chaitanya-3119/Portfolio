@@ -41,6 +41,10 @@ export default function Stack({ skills }: { skills: Skill[] }) {
     return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
   });
 
+  const n = categories.length;
+  const remainder3 = n % 3;
+  const remainder2 = n % 2;
+
   return (
     <section
       id="stack"
@@ -62,18 +66,32 @@ export default function Stack({ skills }: { skills: Skill[] }) {
         </Reveal>
 
         <div
-          className="grid gap-px overflow-hidden rounded-2xl sm:grid-cols-2 lg:grid-cols-3"
+          className="grid gap-px overflow-hidden rounded-2xl sm:grid-cols-2 lg:grid-cols-6"
           style={{
             background: "var(--color-line)",
             border: "1px solid var(--color-line)",
           }}
         >
-          {categories.map((category, i) => (
-            <Reveal key={category} index={i}>
-              <div
-                className="flex h-full flex-col p-5 sm:p-6"
-                style={{ background: "var(--color-ink)" }}
+          {categories.map((category, i) => {
+            const isLastRow3 = remainder3 !== 0 && i >= n - remainder3;
+            const spanClass = isLastRow3
+              ? remainder3 === 1
+                ? "lg:col-span-6"
+                : "lg:col-span-3"
+              : "lg:col-span-2";
+            const smSpanClass =
+              remainder2 === 1 && i === n - 1 ? "sm:col-span-2" : "";
+
+            return (
+              <Reveal
+                key={category}
+                index={i}
+                className={`${spanClass} ${smSpanClass}`.trim()}
               >
+                <div
+                  className="flex h-full flex-col p-5 sm:p-6"
+                  style={{ background: "var(--color-ink)" }}
+                >
                 <div className="flex items-baseline justify-between gap-3">
                   <p className="mono uppercase tracking-[0.16em] text-[var(--color-paper)]">
                     {category}
@@ -112,7 +130,8 @@ export default function Stack({ skills }: { skills: Skill[] }) {
                 </ul>
               </div>
             </Reveal>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>

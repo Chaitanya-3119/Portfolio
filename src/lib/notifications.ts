@@ -188,8 +188,8 @@ async function sendSmtpNotification(payload: NotificationPayload) {
     port,
     secure,
     auth: {
-      user,
-      pass,
+      user: user.trim(),
+      pass: pass.replace(/\s+/g, ""),
     },
   });
 

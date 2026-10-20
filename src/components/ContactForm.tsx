@@ -172,14 +172,14 @@ export default function ContactForm() {
         </div>
       )}
 
-      <div className="mt-5 flex items-center justify-between gap-4">
+      <div className="mt-5 flex flex-wrap items-center justify-between gap-x-4 gap-y-3">
         <p className="mono text-[11px] text-[var(--color-fog-dim)]">
           Goes straight to my inbox
         </p>
         <button
           type="submit"
           disabled={status === "loading"}
-          className="btn btn-solid !py-2.5 !px-5 !text-[13px] inline-flex items-center gap-2"
+          className="btn btn-solid inline-flex shrink-0 items-center gap-2 whitespace-nowrap !px-5 !py-2.5 !text-[13px]"
         >
           {status === "loading" ? (
             <>

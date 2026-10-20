@@ -12,14 +12,14 @@ export const fallbackProfile = {
   headlineEm: "ship.",
   avatar: "",
   tagline:
-    "Full stack developer working across the interface, the API and the database. I've launched live products with real users — public platforms, donation systems, and a donor tele-calling suite.",
-  bio: "I'm a full stack developer based in India. I like the whole path of a product: shaping the interface, wiring the API, modelling the data, then getting it deployed and actually working in someone's browser. Most of what I build is TypeScript and React on the front, Node and Mongo or Postgres behind it.",
+    "Full stack developer who has shipped live products with real users — public platforms, donation systems, a donor tele-calling suite, and a hiring pipeline.",
+  bio: "I'm a full stack developer based in India who ships end to end — interface, API, data model, and deployment. My work is live in production right now: Harekrishna Vizag's public platform and donation flow, the Donor Care Cell tele-calling suite used by an internal team every day, and a careers portal processing real applicant pipelines. I work mostly in TypeScript — React and Next.js on the front, Node and PostgreSQL/MongoDB behind it — and I care about the parts users never see: performance, data integrity, and clean handoffs between layers.",
   location: "India",
   email: "chaitanya7101@gmail.com",
   availability: "Open to work",
   socialLinks: {
     github: "https://github.com/Chaitanya-3119",
-    linkedin: "",
+    linkedin: "https://www.linkedin.com/in/dasari-chaitanya-69a431281",
     twitter: "",
   },
 };
@@ -76,7 +76,7 @@ export const fallbackProjects = [
     description:
       "Centralized donor administration and tele-calling platform managing real-time donations across Harekrishna Vizag & MakonisSoft, combined with an automated laptop-to-phone dialer app.",
     image: "/projects/project3.jpg",
-    tags: ["React", "TypeScript", "Node.js", "MongoDB", "Android APK", "WebSockets"],
+    tags: ["React", "TypeScript", "Node.js", "PostgreSQL", "Android APK", "WebSockets"],
     liveUrl: "https://drm.harekrishnavizag.org",
     githubUrl: "https://github.com/Chaitanya-3119",
     featured: true,
@@ -213,7 +213,7 @@ export const fallbackEducation: {
     endYear: "2026",
     current: false,
     grade: "",
-    description: "Bachelor of Technology in Computer Science & Engineering (2022 — 2026).",
+    description: "",
     order: 1,
   },
 ];
