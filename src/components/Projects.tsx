@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight, ArrowRight } from "lucide-react";
 import Reveal from "@/components/Reveal";
@@ -60,6 +61,33 @@ function ProjectMedia({ project }: { project: ProjectItem }) {
           alt={`${project.title} homepage preview`}
           title={project.title}
         />
+        {isMakonis && (
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 z-10"
+          >
+            <div className="absolute inset-x-0 top-0 flex items-start justify-between px-4 pt-3 sm:px-5 sm:pt-4">
+              <div className="flex flex-col items-center">
+                <Image
+                  src="/makonis-logo.png"
+                  alt=""
+                  width={700}
+                  height={438}
+                  className="h-6 w-auto sm:h-8"
+                  style={{ filter: "brightness(0) invert(1)" }}
+                />
+                <span className="mt-1 text-[7px] uppercase tracking-[0.06em] text-white/75 sm:text-[8px]">
+                  ISO/IEC 27001:2022
+                </span>
+              </div>
+              <div className="flex flex-col items-start gap-[4px] pt-0.5">
+                <span className="block h-[2px] w-6 rounded-sm bg-white/90 sm:w-7" />
+                <span className="block h-[2px] w-6 rounded-sm bg-white/90 sm:w-7" />
+                <span className="block h-[2px] w-3 rounded-sm bg-white/90 sm:w-3.5" />
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
