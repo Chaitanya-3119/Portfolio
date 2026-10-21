@@ -1,3 +1,4 @@
+import { connection } from "next/server";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import Projects from "@/components/Projects";
@@ -20,6 +21,7 @@ import {
 export const instant = false;
 
 async function getPortfolioData() {
+  await connection();
   const fallback = {
     profile: fallbackProfile,
     projects: fallbackProjects,

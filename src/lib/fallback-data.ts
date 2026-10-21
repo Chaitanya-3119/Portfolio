@@ -31,7 +31,7 @@ export const fallbackProjects = [
     slug: "harekrishnavizag",
     description:
       "The main public platform for Harekrishna Vizag — profile, services, online donations, stories, and integrated live phone donor support.",
-    image: "/projects/project1.jpg",
+    image: "",
     tags: ["Next.js", "React", "TypeScript", "Node.js", "MongoDB", "Payment Gateway"],
     liveUrl: "https://harekrishnavizag.org",
     githubUrl: "https://github.com/Chaitanya-3119",
@@ -53,7 +53,7 @@ export const fallbackProjects = [
     slug: "makonissoft",
     description:
       "The product business platform: open-source-friendly builds, modern web applications, client solutions, and core donor-care technical infrastructure.",
-    image: "/projects/project2.jpg",
+    image: "",
     tags: ["React", "TypeScript", "Tailwind CSS", "Node.js", "Cloud Infrastructure"],
     liveUrl: "https://makonissoft.com",
     githubUrl: "https://github.com/Chaitanya-3119",
@@ -75,7 +75,7 @@ export const fallbackProjects = [
     slug: "donor-care-cell",
     description:
       "Centralized donor administration and tele-calling platform managing real-time donations across Harekrishna Vizag & MakonisSoft, combined with an automated laptop-to-phone dialer app.",
-    image: "/projects/project3.jpg",
+    image: "",
     tags: ["React", "TypeScript", "Node.js", "PostgreSQL", "Android APK", "WebSockets"],
     liveUrl: "https://drm.harekrishnavizag.org",
     githubUrl: "https://github.com/Chaitanya-3119",
@@ -97,7 +97,7 @@ export const fallbackProjects = [
     slug: "careers",
     description:
       "Dedicated recruitment and candidate pipeline platform for Harekrishna Vizag with automated resume intake, applicant tracking, and recruiter notifications.",
-    image: "/projects/project2.jpg",
+    image: "",
     tags: ["Next.js", "TypeScript", "Tailwind CSS", "Node.js", "PostgreSQL"],
     liveUrl: "https://careers.harekrishnavizag.org",
     githubUrl: "https://github.com/Chaitanya-3119",
@@ -119,7 +119,7 @@ export const fallbackProjects = [
     slug: "codecraft",
     description:
       "Upload the photos from an event, describe what happened, and get a shareable AI recreation of it you can download.",
-    image: "/projects/project2.jpg",
+    image: "",
     tags: ["React", "TypeScript", "Vite", "AI"],
     liveUrl: "",
     githubUrl: "https://github.com/Chaitanya-3119/codecraft",
@@ -141,7 +141,7 @@ export const fallbackProjects = [
     slug: "accounting-package",
     description:
       "A small accounting package for a business: ledgers, entries and the reports that go with them.",
-    image: "/projects/project3.jpg",
+    image: "",
     tags: ["PHP", "MySQL"],
     liveUrl: "",
     githubUrl: "https://github.com/Chaitanya-3119/accounting-package",

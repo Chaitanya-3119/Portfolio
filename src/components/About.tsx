@@ -50,10 +50,9 @@ export default function About({
             <div className="lg:sticky lg:top-28">
               {profile.avatar && (
                 <span
-                  className="relative mb-6 block overflow-hidden rounded-2xl"
+                  className="relative mb-7 block w-full overflow-hidden rounded-2xl"
                   style={{
-                    width: 180,
-                    height: 180,
+                    aspectRatio: "1448 / 1086",
                     border: "1px solid var(--color-line-strong)",
                   }}
                 >
@@ -61,7 +60,7 @@ export default function About({
                     src={profile.avatar}
                     alt={profile.name}
                     fill
-                    sizes="180px"
+                    sizes="(min-width: 1024px) 420px, calc(100vw - 40px)"
                     className="h-full w-full object-cover"
                   />
                 </span>

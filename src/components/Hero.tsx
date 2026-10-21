@@ -1,4 +1,6 @@
-import Image from "next/image";
+"use client";
+
+import { useEffect, useRef } from "react";
 import { ArrowUpRight, MapPin } from "lucide-react";
 import Reveal from "@/components/Reveal";
 
@@ -11,7 +13,6 @@ type HeroProfile = {
   location: string;
   email: string;
   availability?: string;
-  avatar?: string;
 };
 
 type HeroProject = {
@@ -22,6 +23,8 @@ type HeroProject = {
   liveUrl?: string;
 };
 
+const LIVE_SLA = ["harekrishnavizag", "makonissoft", "careers"];
+
 export default function Hero({
   profile,
   projects,
@@ -29,10 +32,55 @@ export default function Hero({
   profile: HeroProfile;
   projects: HeroProject[];
 }) {
-  const featured = [...projects].sort((a, b) => a.order - b.order).slice(0, 3);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    if (
+      typeof window.matchMedia === "function" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      videoRef.current?.pause();
+    }
+  }, []);
+
+  const bySlug = new Map(projects.map((p) => [p.slug, p]));
+  const picked = LIVE_SLA.map((slug) => bySlug.get(slug)).filter(
+    (p): p is HeroProject => Boolean(p)
+  );
+  const featured =
+    picked.length > 0
+      ? picked
+      : [...projects].sort((a, b) => a.order - b.order).slice(0, 3);
 
   return (
     <section id="top" className="relative overflow-hidden pt-32 pb-16 sm:pt-36">
+      {/* hero background video (live from makonissoft.com) */}
+      <video
+        ref={videoRef}
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="metadata"
+        poster="https://makonissoft.com/hero/poster.jpg"
+        aria-hidden="true"
+        tabIndex={-1}
+        className="pointer-events-none absolute inset-0 -z-20 h-full w-full object-cover"
+      >
+        <source
+          src="https://makonissoft.com/hero/desktop_optimized.mp4"
+          media="(min-width: 768px)"
+        />
+        <source src="https://makonissoft.com/hero/mobile_optimized.mp4" />
+      </video>
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 -z-10"
+        style={{
+          background:
+            "linear-gradient(to bottom, rgba(8,8,10,0.72), rgba(8,8,10,0.82) 55%, rgba(8,8,10,0.98))",
+        }}
+      />
       {/* hairline grid */}
       <div
         aria-hidden="true"
@@ -57,29 +105,13 @@ export default function Hero({
         <div className="grid items-end gap-14 lg:grid-cols-[1.4fr_0.6fr] lg:gap-20">
           <div>
             <Reveal>
-              <div className="flex items-center gap-4">
-                {profile.avatar && (
-                  <span
-                    className="relative inline-block shrink-0 overflow-hidden rounded-full"
-                    style={{
-                      width: 56,
-                      height: 56,
-                      border: "1px solid var(--color-line-strong)",
-                    }}
-                  >
-                    <Image
-                      src={profile.avatar}
-                      alt={profile.name}
-                      fill
-                      sizes="56px"
-                      className="h-full w-full object-cover"
-                    />
-                  </span>
-                )}
-                <p className="eyebrow">
-                  {profile.name} · {profile.title}
-                </p>
-              </div>
+              <p className="eyebrow flex-wrap">
+                <span>{profile.name}</span>
+                <span className="hidden sm:inline" aria-hidden="true">
+                  ·
+                </span>
+                <span className="basis-full sm:basis-auto">{profile.title}</span>
+              </p>
             </Reveal>
 
             <Reveal index={1}>
@@ -145,7 +177,7 @@ export default function Hero({
                   Live right now
                 </p>
                 <ul className="mt-5 list-none">
-                  {featured.map((project) => (
+                  {featured.map((project, i) => (
                     <li key={project._id}>
                       <a
                         href={project.liveUrl ?? "#work"}
@@ -162,7 +194,7 @@ export default function Hero({
                           {project.title}
                         </span>
                         <span className="mono shrink-0">
-                          {String(project.order).padStart(2, "0")}
+                          {String(i + 1).padStart(2, "0")}
                         </span>
                       </a>
                     </li>

@@ -1,3 +1,4 @@
+import { connection } from "next/server";
 import dbConnect, { isDbConfigured } from "@/lib/mongodb";
 import {
   Project,
@@ -52,6 +53,8 @@ function fallbackData(): PortfolioData {
 }
 
 export async function getPortfolioData(): Promise<PortfolioData> {
+  await connection();
+
   if (!isDbConfigured) return fallbackData();
 
   try {

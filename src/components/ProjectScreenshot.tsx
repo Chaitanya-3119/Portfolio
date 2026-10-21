@@ -25,12 +25,27 @@ export default function ProjectScreenshot({
   title,
   priority,
 }: Props) {
-  const [failed, setFailed] = useState(false);
+  const [imgFailed, setImgFailed] = useState(false);
+  const [liveFailed, setLiveFailed] = useState(false);
 
-  const canTryLive = Boolean(liveUrl) && !failed;
-  const src = canTryLive
+  // Prioritize the custom uploaded image (e.g. from Cloudinary)
+  // Fall back to automated liveCaptureUrl only if no image is uploaded or it fails
+  const hasUploaded = Boolean(fallbackImage) && !imgFailed;
+  const canTryLive = Boolean(liveUrl) && !liveFailed;
+
+  const src = hasUploaded
+    ? (fallbackImage as string)
+    : canTryLive
     ? liveCaptureUrl(liveUrl as string)
-    : fallbackImage;
+    : undefined;
+
+  const handleError = () => {
+    if (hasUploaded) {
+      setImgFailed(true);
+    } else {
+      setLiveFailed(true);
+    }
+  };
 
   if (!src) {
     return (
@@ -57,7 +72,7 @@ export default function ProjectScreenshot({
       sizes="(min-width: 1024px) 960px, 100vw"
       priority={priority}
       className="h-full w-full object-cover object-top transition-transform duration-500"
-      onError={() => setFailed(true)}
+      onError={handleError}
     />
   );
 }
