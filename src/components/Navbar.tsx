@@ -93,19 +93,24 @@ export default function Navbar({
             <Link
               href={onHome ? "#top" : "/"}
               aria-label="Dasari Chaitanya — home"
-              className="flex shrink-0 items-center gap-2.5 no-underline"
+              className="flex shrink-0 items-center gap-3 no-underline transition-all duration-300"
             >
               <Image
                 src="/logo-nav.png"
                 alt=""
                 aria-hidden="true"
-                width={72}
-                height={32}
-                className="h-8 w-auto"
+                width={120}
+                height={52}
+                style={{ width: "auto" }}
+                className={`transition-all duration-300 ${
+                  scrolled ? "h-8" : "h-12 sm:h-14"
+                }`}
                 priority
               />
               <span
-                className="hidden text-[13px] font-semibold tracking-[-0.01em] sm:block"
+                className={`hidden font-semibold tracking-[-0.01em] sm:block transition-all duration-300 ${
+                  scrolled ? "text-[13px]" : "text-[15px]"
+                }`}
                 style={{ color: "var(--color-paper)" }}
               >
                 Dasari Chaitanya
@@ -165,8 +170,9 @@ export default function Navbar({
               src="/logo-nav.png"
               alt=""
               aria-hidden="true"
-              width={72}
-              height={32}
+              width={64}
+              height={64}
+              style={{ width: "auto" }}
               className="h-8 w-auto"
             />
             <button

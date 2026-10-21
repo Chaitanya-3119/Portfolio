@@ -1,6 +1,3 @@
-"use client";
-
-import { useEffect, useRef } from "react";
 import { ArrowUpRight, MapPin } from "lucide-react";
 import Reveal from "@/components/Reveal";
 
@@ -23,8 +20,6 @@ type HeroProject = {
   liveUrl?: string;
 };
 
-const LIVE_SLA = ["harekrishnavizag", "makonissoft", "careers"];
-
 export default function Hero({
   profile,
   projects,
@@ -32,55 +27,57 @@ export default function Hero({
   profile: HeroProfile;
   projects: HeroProject[];
 }) {
-  const videoRef = useRef<HTMLVideoElement>(null);
+  // Find targeted live projects
+  const findProject = (keywords: string[]) => {
+    return projects.find((p) =>
+      keywords.some(
+        (k) =>
+          p.slug.toLowerCase().includes(k.toLowerCase()) ||
+          p.title.toLowerCase().includes(k.toLowerCase())
+      )
+    );
+  };
 
-  useEffect(() => {
-    if (
-      typeof window.matchMedia === "function" &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    ) {
-      videoRef.current?.pause();
-    }
-  }, []);
+  const p1 = findProject(["harekrishna", "hkm-vizag"]);
+  const p2 = findProject(["makonis"]);
+  const p3 = findProject(["career", "hiring"]);
 
-  const bySlug = new Map(projects.map((p) => [p.slug, p]));
-  const picked = LIVE_SLA.map((slug) => bySlug.get(slug)).filter(
-    (p): p is HeroProject => Boolean(p)
+  const picked: HeroProject[] = [];
+  if (p1) picked.push(p1);
+  if (p2) picked.push(p2);
+  if (p3) {
+    picked.push({
+      ...p3,
+      title: "HKM Careers",
+    });
+  } else {
+    picked.push({
+      _id: "careers",
+      title: "HKM Careers",
+      slug: "careers",
+      order: 3,
+      liveUrl: "https://careers.harekrishnavizag.org",
+    });
+  }
+
+  // Filter out any DRM / donor care project from Live Right Now
+  const nonDrmProjects = projects.filter(
+    (p) =>
+      !p.title.toLowerCase().includes("drm") &&
+      !p.title.toLowerCase().includes("donor") &&
+      !p.slug.toLowerCase().includes("donor")
   );
+
   const featured =
-    picked.length > 0
-      ? picked
-      : [...projects].sort((a, b) => a.order - b.order).slice(0, 3);
+    picked.length >= 3
+      ? picked.slice(0, 3)
+      : [
+          ...picked,
+          ...nonDrmProjects.filter((p) => !picked.some((x) => x._id === p._id)),
+        ].slice(0, 3);
 
   return (
     <section id="top" className="relative overflow-hidden pt-32 pb-16 sm:pt-36">
-      {/* hero background video (live from makonissoft.com) */}
-      <video
-        ref={videoRef}
-        autoPlay
-        muted
-        loop
-        playsInline
-        preload="metadata"
-        poster="https://makonissoft.com/hero/poster.jpg"
-        aria-hidden="true"
-        tabIndex={-1}
-        className="pointer-events-none absolute inset-0 -z-20 h-full w-full object-cover"
-      >
-        <source
-          src="https://makonissoft.com/hero/desktop_optimized.mp4"
-          media="(min-width: 768px)"
-        />
-        <source src="https://makonissoft.com/hero/mobile_optimized.mp4" />
-      </video>
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 -z-10"
-        style={{
-          background:
-            "linear-gradient(to bottom, rgba(8,8,10,0.72), rgba(8,8,10,0.82) 55%, rgba(8,8,10,0.98))",
-        }}
-      />
       {/* hairline grid */}
       <div
         aria-hidden="true"

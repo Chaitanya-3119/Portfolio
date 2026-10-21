@@ -93,7 +93,7 @@ export const fallbackProjects = [
   },
   {
     _id: "careers",
-    title: "Careers Portal",
+    title: "HKM Careers",
     slug: "careers",
     description:
       "Dedicated recruitment and candidate pipeline platform for Harekrishna Vizag with automated resume intake, applicant tracking, and recruiter notifications.",

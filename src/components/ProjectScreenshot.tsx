@@ -1,11 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 
 type Props = {
   liveUrl?: string;
   fallbackImage?: string;
+  videoUrl?: string;
+  videoUrlMobile?: string;
+  videoPoster?: string;
   alt: string;
   title: string;
   priority?: boolean;
@@ -21,12 +24,33 @@ function liveCaptureUrl(url: string) {
 export default function ProjectScreenshot({
   liveUrl,
   fallbackImage,
+  videoUrl,
+  videoUrlMobile,
+  videoPoster,
   alt,
   title,
   priority,
 }: Props) {
   const [imgFailed, setImgFailed] = useState(false);
   const [liveFailed, setLiveFailed] = useState(false);
+  const [videoFailed, setVideoFailed] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    if (
+      typeof window.matchMedia === "function" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      video.pause();
+      return;
+    }
+    const attempt = video.play();
+    if (attempt) attempt.catch(() => {});
+  }, [videoUrl]);
+
+  const showVideo = Boolean(videoUrl) && !videoFailed;
 
   // Prioritize the custom uploaded image (e.g. from Cloudinary)
   // Fall back to automated liveCaptureUrl only if no image is uploaded or it fails
@@ -46,6 +70,31 @@ export default function ProjectScreenshot({
       setLiveFailed(true);
     }
   };
+
+  if (showVideo) {
+    return (
+      <video
+        ref={videoRef}
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="metadata"
+        poster={videoPoster}
+        aria-label={alt}
+        className="h-full w-full object-cover object-top"
+        onError={() => setVideoFailed(true)}
+      >
+        {videoUrlMobile && (
+          <source src={videoUrl} media="(min-width: 768px)" />
+        )}
+        <source
+          src={videoUrlMobile ?? videoUrl}
+          onError={() => setVideoFailed(true)}
+        />
+      </video>
+    );
+  }
 
   if (!src) {
     return (

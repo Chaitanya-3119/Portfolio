@@ -25,7 +25,15 @@ export type ProjectItem = {
   highlights?: string[];
 };
 
+const MAKONIS_HERO = {
+  desktop: "https://makonissoft.com/hero/desktop_optimized.mp4",
+  mobile: "https://makonissoft.com/hero/mobile_optimized.mp4",
+  poster: "https://makonissoft.com/hero/poster.jpg",
+};
+
 function ProjectMedia({ project }: { project: ProjectItem }) {
+  const isMakonis = project.slug === "makonissoft";
+
   return (
     <div className="shot overflow-hidden rounded-[12px] transition-transform duration-300 group-hover:scale-[1.01]">
       <div
@@ -46,6 +54,9 @@ function ProjectMedia({ project }: { project: ProjectItem }) {
         <ProjectScreenshot
           liveUrl={project.liveUrl}
           fallbackImage={project.image}
+          videoUrl={isMakonis ? MAKONIS_HERO.desktop : undefined}
+          videoUrlMobile={isMakonis ? MAKONIS_HERO.mobile : undefined}
+          videoPoster={isMakonis ? MAKONIS_HERO.poster : undefined}
           alt={`${project.title} homepage preview`}
           title={project.title}
         />
