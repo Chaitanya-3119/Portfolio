@@ -38,7 +38,7 @@ export default function About({
     },
     {
       stat: "TypeScript",
-      label: "React & Next.js up front, Node & Postgres behind",
+      label: "Typed end to end, from React interfaces to Postgres schemas",
     },
   ];
 

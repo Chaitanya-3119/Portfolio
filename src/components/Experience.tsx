@@ -120,11 +120,11 @@ export default function Experience({
                   <Reveal key={edu._id} index={i}>
                     <article className="edu-card mx-auto max-w-2xl px-8 py-12 text-center">
                       <p className="mono uppercase tracking-[0.18em]">
-                        {edu.current ? "In progress" : "Undergraduate degree"}
+                        Undergraduate degree
                       </p>
 
                       <h3 className="mt-5 font-serif text-[clamp(2.25rem,5vw,3rem)] leading-none tracking-[-0.03em]">
-                        {edu.degree}
+                        {edu.degree.includes("B.Tech") ? "B.Tech" : edu.degree}
                       </h3>
 
                       {edu.field && (
@@ -136,30 +136,13 @@ export default function Experience({
                         </p>
                       )}
 
-                      {edu.institution && (
-                        <p
-                          className="mt-2 text-[0.92rem] font-medium"
-                          style={{ color: "var(--color-accent)" }}
-                        >
-                          {edu.institution}
-                        </p>
-                      )}
-
-                      {(edu.startYear || edu.endYear || edu.grade) && (
-                        <div className="mt-7 flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
-                          {(edu.startYear || edu.endYear) && (
-                            <span className="mono text-[var(--color-fog)]">
-                              {dateRange(edu.startYear, edu.endYear, edu.current)}
-                            </span>
-                          )}
-                          {edu.grade && (
-                            <span
-                              className="mono"
-                              style={{ color: "var(--color-accent)" }}
-                            >
-                              {edu.grade}
-                            </span>
-                          )}
+                      {(edu.startYear || edu.endYear) && (
+                        <div className="mt-7">
+                          <span className="mono text-[var(--color-fog)]">
+                            {edu.startYear && edu.endYear
+                              ? `${edu.startYear} — ${edu.endYear}`
+                              : dateRange(edu.startYear, edu.endYear, edu.current)}
+                          </span>
                         </div>
                       )}
                     </article>

@@ -254,14 +254,13 @@ export const fallbackEducation = [
   {
     _id: "btech-gvp",
     institution: "Gayatri Vidya Parishad College for Degree & P.G. Courses (A)",
-    degree: "B.Tech in Computer Science and Engineering",
+    degree: "B.Tech",
     field: "Computer Science & Engineering",
     startYear: "2022",
     endYear: "2026",
     current: false,
     grade: "Undergraduate",
-    description:
-      "Core coursework: Data Structures & Algorithms, OOP, Database Management Systems, MERN Architecture, and Generative AI.",
+    description: "",
     order: 1,
   },
 ];
