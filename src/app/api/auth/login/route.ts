@@ -17,11 +17,17 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const defaultEmail = process.env.ADMIN_EMAIL || "admin@chaitanya.dev";
+    const defaultEmail = process.env.ADMIN_EMAIL || "chaitanya7101@gmail.com";
     const defaultPassword = process.env.ADMIN_PASSWORD || "changeme123";
 
+    const isMatch = (target: string) => {
+      const input = email.trim().toLowerCase();
+      const tgt = target.trim().toLowerCase();
+      return input === tgt || (tgt === "admin@chaitanya.dev" && input === defaultEmail.toLowerCase());
+    };
+
     if (!isDbConfigured) {
-      if (email.trim().toLowerCase() === defaultEmail.trim().toLowerCase() && password === defaultPassword) {
+      if ((isMatch(defaultEmail) || email.trim().toLowerCase() === "admin@chaitanya.dev") && password === defaultPassword) {
         const token = jwt.sign(
           { id: "local-admin", email: defaultEmail, name: "Admin (Demo Mode)" },
           JWT_SECRET,
@@ -53,15 +59,21 @@ export async function POST(req: NextRequest) {
     try {
       await dbConnect();
 
-      const admin = await Admin.findOne({
+      let admin = await Admin.findOne({
         email: { $regex: new RegExp(`^${email.trim()}$`, "i") },
       });
+
+      if (!admin && email.trim().toLowerCase() === defaultEmail.trim().toLowerCase()) {
+        admin = await Admin.findOne({
+          email: { $regex: /^admin@chaitanya\.dev$/i },
+        });
+      }
 
       if (!admin) {
         // Fallback: If DB is connected but Admin account hasn't been seeded yet,
         // allow logging in with environment credentials
         if (
-          email.trim().toLowerCase() === defaultEmail.trim().toLowerCase() &&
+          (isMatch(defaultEmail) || email.trim().toLowerCase() === "admin@chaitanya.dev") &&
           password === defaultPassword
         ) {
           const token = jwt.sign(
@@ -126,6 +138,11 @@ export async function POST(req: NextRequest) {
           { error: "Invalid password" },
           { status: 401 }
         );
+      }
+
+      if (admin.email.toLowerCase() === "admin@chaitanya.dev") {
+        admin.email = defaultEmail;
+        await admin.save().catch((err: unknown) => console.warn("Failed to auto-update admin email:", err));
       }
 
       const token = jwt.sign(

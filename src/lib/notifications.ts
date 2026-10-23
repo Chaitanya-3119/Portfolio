@@ -65,7 +65,11 @@ export function getNotificationStatus(): NotificationStatus {
     sms,
     anyConfigured: telegram || discord || resend || smtp || whatsapp || sms,
     recipientEmail:
-      process.env.NOTIFICATION_EMAIL || process.env.ADMIN_EMAIL || process.env.SMTP_USER || undefined,
+      (process.env.NOTIFICATION_EMAIL || process.env.ADMIN_EMAIL || process.env.SMTP_USER || "")
+        .split(",")
+        .map((e) => e.trim())
+        .filter((e) => e && !e.toLowerCase().endsWith("@chaitanya.dev"))
+        .join(", ") || undefined,
     recipientPhone:
       process.env.CALLMEBOT_PHONE || process.env.NOTIFICATION_PHONE_NUMBER || undefined,
   };
@@ -170,13 +174,27 @@ async function sendDiscordNotification(payload: NotificationPayload) {
 async function sendSmtpNotification(payload: NotificationPayload) {
   const user = process.env.SMTP_USER;
   const pass = process.env.SMTP_PASS || process.env.SMTP_PASSWORD;
-  const to =
+  const rawTo =
     process.env.NOTIFICATION_EMAIL || process.env.ADMIN_EMAIL || user;
 
-  if (!user || !pass || !to) {
+  if (!user || !pass || !rawTo) {
     throw new Error(
       "SMTP credentials not fully configured (need SMTP_USER, SMTP_PASS, NOTIFICATION_EMAIL)"
     );
+  }
+
+  // Parse comma-separated emails, trim whitespace, and filter out placeholder domains like @chaitanya.dev
+  const recipients = rawTo
+    .split(",")
+    .map((e) => e.trim())
+    .filter((e) => e && !e.toLowerCase().endsWith("@chaitanya.dev"));
+
+  if (recipients.length === 0) {
+    if (user && !user.toLowerCase().endsWith("@chaitanya.dev")) {
+      recipients.push(user.trim());
+    } else {
+      recipients.push("chaitanya7101@gmail.com");
+    }
   }
 
   const host = process.env.SMTP_HOST || "smtp.gmail.com";
@@ -193,10 +211,15 @@ async function sendSmtpNotification(payload: NotificationPayload) {
     },
   });
 
+  const replyTo =
+    payload.email && !payload.email.toLowerCase().endsWith("@chaitanya.dev")
+      ? payload.email
+      : undefined;
+
   const mailOptions = {
     from: `"Portfolio Alert" <${user}>`,
-    to,
-    replyTo: payload.email,
+    to: recipients.join(", "),
+    replyTo,
     subject: `[Portfolio Inquiry] ${payload.subject} (from ${payload.name})`,
     text: `You received a new message on your portfolio:\n\nName: ${payload.name}\nEmail: ${payload.email}\nSubject: ${payload.subject}\n\nMessage:\n${payload.message}\n\nReceived at: ${new Date().toLocaleString()}`,
     html: `
@@ -223,15 +246,29 @@ async function sendSmtpNotification(payload: NotificationPayload) {
  */
 async function sendResendNotification(payload: NotificationPayload) {
   const apiKey = process.env.RESEND_API_KEY;
-  const toEmail =
+  const rawTo =
     process.env.NOTIFICATION_EMAIL || process.env.ADMIN_EMAIL;
 
-  if (!apiKey || !toEmail) {
+  if (!apiKey || !rawTo) {
     throw new Error("Resend API key or notification recipient email not configured");
+  }
+
+  const recipients = rawTo
+    .split(",")
+    .map((e) => e.trim())
+    .filter((e) => e && !e.toLowerCase().endsWith("@chaitanya.dev"));
+
+  if (recipients.length === 0) {
+    recipients.push("chaitanya7101@gmail.com");
   }
 
   const fromEmail =
     process.env.RESEND_FROM_EMAIL || "Portfolio Alert <onboarding@resend.dev>";
+
+  const replyTo =
+    payload.email && !payload.email.toLowerCase().endsWith("@chaitanya.dev")
+      ? payload.email
+      : undefined;
 
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
@@ -241,8 +278,8 @@ async function sendResendNotification(payload: NotificationPayload) {
     },
     body: JSON.stringify({
       from: fromEmail,
-      to: [toEmail],
-      reply_to: payload.email,
+      to: recipients,
+      reply_to: replyTo,
       subject: `[Portfolio Contact] ${payload.subject} (from ${payload.name})`,
       text: `You received a new message on your portfolio:\n\nName: ${payload.name}\nEmail: ${payload.email}\nSubject: ${payload.subject}\n\nMessage:\n${payload.message}\n\nReceived at: ${new Date().toLocaleString()}`,
       html: `

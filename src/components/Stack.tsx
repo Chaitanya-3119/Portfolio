@@ -11,18 +11,20 @@ const CATEGORY_ORDER = [
   "Frontend",
   "Backend",
   "Database",
+  "DevOps & Cloud",
   "DevOps",
   "Tools",
-  "Design",
+  "Concepts",
 ];
 
 const CATEGORY_BLURB: Record<string, string> = {
-  Frontend: "Interfaces people actually use",
-  Backend: "APIs, services and business logic",
-  Database: "Where the data lives",
-  DevOps: "Shipping and keeping it up",
-  Tools: "Daily drivers",
-  Design: "Making it look right",
+  Frontend: "Modern, reactive web interfaces",
+  Backend: "High-throughput APIs & services",
+  Database: "Relational & document persistence",
+  "DevOps & Cloud": "Cloud infrastructure & deployments",
+  DevOps: "Cloud infrastructure & deployments",
+  Tools: "Daily drivers & workflows",
+  Concepts: "Architectures, algorithms & AI",
 };
 
 export default function Stack({ skills }: { skills: Skill[] }) {
@@ -42,8 +44,13 @@ export default function Stack({ skills }: { skills: Skill[] }) {
   });
 
   const n = categories.length;
+  const isFour = n === 4;
   const remainder3 = n % 3;
   const remainder2 = n % 2;
+
+  const gridContainerClass = isFour
+    ? "sm:grid-cols-2 lg:grid-cols-4"
+    : "sm:grid-cols-2 lg:grid-cols-6";
 
   return (
     <section
@@ -66,21 +73,29 @@ export default function Stack({ skills }: { skills: Skill[] }) {
         </Reveal>
 
         <div
-          className="grid gap-px overflow-hidden rounded-2xl sm:grid-cols-2 lg:grid-cols-6"
+          className={`grid gap-px overflow-hidden rounded-2xl ${gridContainerClass}`}
           style={{
             background: "var(--color-line)",
             border: "1px solid var(--color-line)",
           }}
         >
           {categories.map((category, i) => {
-            const isLastRow3 = remainder3 !== 0 && i >= n - remainder3;
-            const spanClass = isLastRow3
-              ? remainder3 === 1
-                ? "lg:col-span-6"
-                : "lg:col-span-3"
-              : "lg:col-span-2";
-            const smSpanClass =
-              remainder2 === 1 && i === n - 1 ? "sm:col-span-2" : "";
+            let spanClass = "";
+            let smSpanClass = "";
+
+            if (isFour) {
+              spanClass = "lg:col-span-1";
+              smSpanClass = "sm:col-span-1";
+            } else {
+              const isLastRow3 = remainder3 !== 0 && i >= n - remainder3;
+              spanClass = isLastRow3
+                ? remainder3 === 1
+                  ? "lg:col-span-6"
+                  : "lg:col-span-3"
+                : "lg:col-span-2";
+              smSpanClass =
+                remainder2 === 1 && i === n - 1 ? "sm:col-span-2" : "";
+            }
 
             return (
               <Reveal

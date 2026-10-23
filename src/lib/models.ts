@@ -193,7 +193,7 @@ const ProfileSchema = new Schema<IProfile>({
   shortName: { type: String, default: "" },
   headline: { type: String, default: "" },
   headlineEm: { type: String, default: "" },
-  availability: { type: String, default: "Open to work" },
+  availability: { type: String, default: "Open to work · Will relocate if required" },
   title: { type: String, required: true },
   tagline: { type: String, required: true },
   bio: { type: String, required: true },

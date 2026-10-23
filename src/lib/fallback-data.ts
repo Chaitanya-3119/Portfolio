@@ -1,8 +1,5 @@
-// Content used when MongoDB isn't configured (the default for this site).
-// Everything here is editable in one place; see CONTENT.md for the checklist.
-//
-// Rule of thumb: no dead links, no invented employers, no fake testimonials.
-// Anything that isn't filled in stays empty and its section hides itself.
+// Content used when MongoDB isn't configured (and default seed data).
+// Everything here reflects verified production platforms and academic projects from Dasari Chaitanya's resume.
 
 export const fallbackProfile = {
   name: "Dasari Chaitanya",
@@ -12,11 +9,12 @@ export const fallbackProfile = {
   headlineEm: "ship.",
   avatar: "",
   tagline:
-    "Full stack developer who has shipped live products with real users — public platforms, donation systems, a donor tele-calling suite, and a hiring pipeline.",
-  bio: "I'm a full stack developer based in India who ships end to end — interface, API, data model, and deployment. My work is live in production right now: Harekrishna Vizag's public platform and donation flow, the Donor Care Cell tele-calling suite used by an internal team every day, and a careers portal processing real applicant pipelines. I work mostly in TypeScript — React and Next.js on the front, Node and PostgreSQL/MongoDB behind it — and I care about the parts users never see: performance, data integrity, and clean handoffs between layers.",
-  location: "India",
-  email: "chaitanya7101@gmail.com",
-  availability: "Open to work",
+    "Full stack developer with proven production track record — architecting systems raising ₹95L+ across 12,000+ donors, managing 20,000+ CRM records, and scaling Redis for 2 lakh+ peak-day visitors.",
+  bio: "I'm a full stack developer based in Visakhapatnam, India experienced in building and shipping production web applications on the MERN stack and Next.js, with hands-on experience deploying and maintaining live backend services on DigitalOcean and Railway. My systems are live in production right now: Hare Krishna Movement's main platform and donation engine (powering ₹95L+ across 12,000+ donors with Redis caching for 2L+ peak visitors), the Donor Care Cell (DRM) managing 20,000+ records with an automated laptop-to-phone dialer app, an independent HKM Careers recruitment portal with automated SMTP pipelines, and Makonis AI Solutions' platform. I bridge responsive frontend interfaces with resilient backend REST APIs, caching, and database modeling across MongoDB and PostgreSQL.",
+  location: "Visakhapatnam, Andhra Pradesh",
+  phone: "+91 9951141915",
+  email: "chaitanya9work@gmail.com",
+  availability: "Open to work · Will relocate if required",
   socialLinks: {
     github: "https://github.com/Chaitanya-3119",
     linkedin: "https://www.linkedin.com/in/dasari-chaitanya-69a431281",
@@ -27,68 +25,51 @@ export const fallbackProfile = {
 export const fallbackProjects = [
   {
     _id: "harekrishnavizag",
-    title: "Harekrisna Vizag",
+    title: "Hare Krishna Movement Vizag",
     slug: "harekrishnavizag",
     description:
-      "The main public platform for Harekrishna Vizag — profile, services, online donations, stories, and integrated live phone donor support.",
+      "High-throughput production web platform and donation engine raising ₹95L+ from 12,000+ donors, backed by Redis for 2 lakh+ peak-day visitors, volunteer QR access control, and Razorpay integration.",
+    longDescription:
+      "Own and scale the organization's primary production web platform for Hare Krishna Movement Visakhapatnam. The platform powers public community outreach, festival events, user authentication, a devotional merchandise shop, and high-throughput online donations. Built with Next.js, React, and Node.js with Redis caching to smoothly absorb 200,000+ peak-day concurrent visitors during major events like Janmashtami without latency spikes. Architected an administrative QR code access control system for event volunteers, integrated Razorpay payment webhooks and API keys, and collaborated on backend APIs for the Vaikuntham mobile application.",
     image: "",
-    tags: ["Next.js", "React", "TypeScript", "Node.js", "MongoDB", "Payment Gateway"],
+    tags: ["Next.js", "React.js", "Node.js", "Redis", "MongoDB", "Razorpay", "DigitalOcean", "REST APIs"],
     liveUrl: "https://harekrishnavizag.org",
     githubUrl: "https://github.com/Chaitanya-3119",
     featured: true,
     order: 1,
-    year: "2024 — 25",
-    role: "Full stack",
-    status: "Live",
+    year: "2024 — 2026",
+    role: "Full Stack Developer",
+    status: "Live in Production",
     screenshots: [],
     highlights: [
-      "Production web platform serving live users and community outreach",
-      "Seamless online donation flow with real-time receipt generation",
-      "Connects to the backend Donor Care Cell for synchronized donor management",
+      "Raised an estimated ₹95 Lakh+ from 12,000+ donors through seamless Razorpay donation flow",
+      "Scaled infrastructure with Redis caching to reliably serve 2 Lakh+ peak-day visitors (Janmashtami)",
+      "Engineered volunteer QR code access control with holder types, permission categories, and dynamic QR issuance",
+      "Migrated Razorpay webhooks and collaborated on backend REST APIs for the Vaikuntham mobile app",
     ],
   },
   {
     _id: "makonissoft",
-    title: "MakonisSoft",
+    title: "Makonis AI Solutions",
     slug: "makonissoft",
     description:
-      "The product business platform: open-source-friendly builds, modern web applications, client solutions, and core donor-care technical infrastructure.",
+      "Corporate digital platform and product showcase for Makonis AI Solutions featuring responsive brand storytelling, reusable component architecture, and client inquiry funnels.",
+    longDescription:
+      "Developed and optimized responsive web pages, reusable component architectures, and client funnels for Makonis AI Solutions Pvt. Ltd., Hyderabad. Focused on edge performance, cross-device responsiveness, clean component contracts, and seamless backend API integrations. Collaborated closely with core engineering to redesign company digital surfaces, streamline assets, and optimize load speeds.",
     image: "",
-    tags: ["React", "TypeScript", "Tailwind CSS", "Node.js", "Cloud Infrastructure"],
+    tags: ["React.js", "JavaScript", "HTML5", "CSS3", "Node.js", "REST APIs", "Tailwind CSS"],
     liveUrl: "https://makonissoft.com",
     githubUrl: "https://github.com/Chaitanya-3119",
     featured: true,
     order: 2,
-    year: "2024 — 25",
-    role: "Full stack",
-    status: "Live",
-    screenshots: [],
-    highlights: [
-      "High-performance edge delivery with responsive brand storytelling",
-      "Product architecture backing the phone-side donor infrastructure",
-      "Client inquiry funnel, service catalogs, and partner dashboards",
-    ],
-  },
-  {
-    _id: "donor-care-cell",
-    title: "Donor Care Cell (DRM)",
-    slug: "donor-care-cell",
-    description:
-      "Centralized donor administration and tele-calling platform managing real-time donations across Harekrishna Vizag & MakonisSoft, combined with an automated laptop-to-phone dialer app.",
-    image: "",
-    tags: ["React", "TypeScript", "Node.js", "PostgreSQL", "Android APK", "WebSockets"],
-    liveUrl: "https://drm.harekrishnavizag.org",
-    githubUrl: "https://github.com/Chaitanya-3119",
-    featured: true,
-    order: 4,
     year: "2025",
-    role: "Full stack & Mobile",
-    status: "Live & Admin",
+    role: "Full Stack Intern",
+    status: "Live in Production",
     screenshots: [],
     highlights: [
-      "Unified administration managing donations, recurring givers, and receipts",
-      "Laptop-to-phone call automation via companion DRM APK without manual dialing",
-      "Secure role-based access control, call audit logs, and donor analytics",
+      "Engineered reusable, modular React component architecture integrated with backend API endpoints",
+      "Optimized asset delivery, video heroes, and styling for high-performance responsive experiences",
+      "Collaborated with senior development team on company website redesign and Git release workflows",
     ],
   },
   {
@@ -96,124 +77,191 @@ export const fallbackProjects = [
     title: "HKM Careers",
     slug: "careers",
     description:
-      "Dedicated recruitment and candidate pipeline platform for Harekrishna Vizag with automated resume intake, applicant tracking, and recruiter notifications.",
+      "Full-cycle recruitment platform with public application tracking, automated interview scheduling, SMTP notifications, candidate document intake via Cloudflare R2 links, and one-click LinkedIn job sharing.",
+    longDescription:
+      "Independently designed, engineered, and deployed the complete recruitment platform for Hare Krishna Movement Visakhapatnam. The platform features an applicant tracking system (ATS) with live application status lookup, automated interview scheduling, and instant multi-stage SMTP email notifications. Recruiter workflows include automated document verification links sent via SMTP, enabling applicants to upload required documents directly to secure Cloudflare R2 storage. Administrators can create new job openings with structured criteria and share them instantly across social platforms like LinkedIn with one click.",
     image: "",
-    tags: ["Next.js", "TypeScript", "Tailwind CSS", "Node.js", "PostgreSQL"],
+    tags: ["Next.js", "React.js", "TypeScript", "Node.js", "PostgreSQL", "Cloudflare R2", "SMTP", "DigitalOcean"],
     liveUrl: "https://careers.harekrishnavizag.org",
     githubUrl: "https://github.com/Chaitanya-3119",
     featured: true,
     order: 3,
-    year: "2025",
-    role: "Full stack",
-    status: "Live",
+    year: "2025 — 2026",
+    role: "Full Stack Developer",
+    status: "Live in Production",
     screenshots: [],
     highlights: [
-      "Online job applications with automated candidate resume intake",
-      "Hiring workflow and applicant tracking pipeline across departments",
-      "Fast applicant processing with automated notifications",
+      "Application tracking system (ATS) allowing applicants to check live status and interview schedules",
+      "Automated interview scheduling with multi-stage SMTP candidate and recruiter email notifications",
+      "Automated document verification links sent via SMTP with secure candidate upload to Cloudflare R2",
+      "Simplified job creation dashboard with one-click social sharing (LinkedIn & direct candidate links)",
+      "Independently architected end-to-end on Next.js, Node.js, and PostgreSQL hosted on DigitalOcean",
     ],
   },
   {
-    _id: "codecraft",
-    title: "CodeCraft — AI Event Recreator",
-    slug: "codecraft",
+    _id: "donor-care-cell",
+    title: "Donor Relation Manager (DRM)",
+    slug: "donor-care-cell",
     description:
-      "Upload the photos from an event, describe what happened, and get a shareable AI recreation of it you can download.",
+      "Centralized donor administration and tele-calling CRM managing 20,000+ donor records with real-time API sync across 4 HKM centers and an automated laptop-to-phone dialer app.",
+    longDescription:
+      "Architected a full-featured PostgreSQL-backed Donor Relation Management (DRM) suite for internal donor care teams across 4 HKM centers. The system centralizes over 20,000 donor records, real-time donation auditing, call logs, recurring pledge tracking, and receipt issuance. To eliminate manual dialing friction, developed an automated companion laptop-to-phone Android APK dialer that seamlessly triggers calls directly from the tele-caller's desktop dashboard through the phone network via WebSockets.",
     image: "",
-    tags: ["React", "TypeScript", "Vite", "AI"],
+    tags: ["PostgreSQL", "Node.js", "React.js", "TypeScript", "Android APK", "WebSockets", "Railway"],
+    liveUrl: "https://drm.harekrishnavizag.org",
+    githubUrl: "https://github.com/Chaitanya-3119",
+    featured: true,
+    order: 4,
+    year: "2025 — 2026",
+    role: "Full Stack & Mobile",
+    status: "Live & Internal Suite",
+    screenshots: [],
+    highlights: [
+      "Architected PostgreSQL database and REST API managing 20,000+ donor profiles and transaction histories",
+      "Real-time bi-directional API synchronization connecting 4 HKM centers and Tele-CRM operations",
+      "Built laptop-to-phone automated dialer with companion Android APK eliminating manual number entry",
+      "Role-based access control (RBAC), donor communication histories, and real-time performance analytics",
+    ],
+  },
+  {
+    _id: "gplan",
+    title: "GPLAN — AI Floor Plan Generator",
+    slug: "gplan",
+    description:
+      "Generative AI architecture combining a Retrieval-Augmented Generation (RAG) pipeline, Google Gemini API, and Fabric.js canvas to produce validated architectural floor plans in milliseconds.",
+    longDescription:
+      "An innovative AI-powered architectural platform engineered using React.js, Python Flask, MongoDB, Google Gemini API, and Fabric.js. Instead of slow and expensive image generation models, designed a RAG pipeline that matches user parameters (plot dimensions, room counts, orientations) against a MongoDB library of architectural layouts, prompting Gemini with the nearest exemplar to return structured, lightweight JSON. Built a mathematical validation layer to enforce real-world room dimensions and wall feasibility before rendering, accompanied by a rule-based algorithmic fallback engine that guarantees zero user downtime during AI rate limits.",
+    image: "",
+    tags: ["React.js", "Python", "Flask", "Google Gemini API", "RAG", "Fabric.js", "MongoDB"],
     liveUrl: "",
-    githubUrl: "https://github.com/Chaitanya-3119/codecraft",
+    githubUrl: "https://github.com/Chaitanya-3119",
     featured: false,
     order: 5,
     year: "2025",
-    role: "Frontend",
-    status: "Source available",
+    role: "Creator & AI Architect",
+    status: "Academic AI Project",
     screenshots: [],
     highlights: [
-      "Photo upload plus a guided description step",
-      "Generation, download and share in a single session",
-      "Responsive layout down to small screens",
+      "Engineered RAG pipeline pairing user constraints with MongoDB layout library for low-latency Gemini generation",
+      "Mathematical validation layer verifying room dimensions, clearances, and layout feasibility prior to display",
+      "Algorithmic rule-based fallback engine providing graceful degradation if AI APIs hit rate limits or timeouts",
+      "Interactive dynamic canvas rendering powered by Fabric.js with exportable architectural schemas",
     ],
   },
   {
-    _id: "accounting-package",
-    title: "Accounting Package",
-    slug: "accounting-package",
+    _id: "ecoguardian",
+    title: "EcoGuardian — Pollution Portal",
+    slug: "ecoguardian",
     description:
-      "A small accounting package for a business: ledgers, entries and the reports that go with them.",
+      "Responsive, database-driven environmental dashboard featuring real-time pollution metrics, citizen grievance redressal, and gamification rewards.",
+    longDescription:
+      "Engineered a full-stack environmental monitoring and community reporting web application built with PHP, MySQL, JavaScript, HTML5, and CSS3. Provides real-time visual dashboards tracking air and water quality indicators, integrated with an end-to-end citizen complaint management system. Features gamification mechanisms (badges, community leaderboards, environmental action rewards) to drive civic engagement in environmental reporting.",
     image: "",
-    tags: ["PHP", "MySQL"],
+    tags: ["PHP", "MySQL", "JavaScript", "HTML5", "CSS3", "REST APIs"],
     liveUrl: "",
-    githubUrl: "https://github.com/Chaitanya-3119/accounting-package",
+    githubUrl: "https://github.com/Chaitanya-3119",
     featured: false,
     order: 6,
-    year: "2025",
-    role: "Full stack",
-    status: "Source available",
+    year: "2024 — 2025",
+    role: "Full Stack Developer",
+    status: "Academic Project",
     screenshots: [],
-    highlights: [],
+    highlights: [
+      "Real-time database-driven dashboard visualizing environmental pollution telemetry",
+      "End-to-end complaint filing, tracking, and civic grievance resolution pipeline",
+      "Gamification system with milestone rewards to incentivize community environmental participation",
+    ],
   },
 ];
 
 export const fallbackSkills = [
-  { _id: "s1", name: "React", category: "Frontend", proficiency: 95, order: 1 },
-  { _id: "s2", name: "Next.js", category: "Frontend", proficiency: 92, order: 2 },
+  // Frontend (4)
+  { _id: "s1", name: "React.js", category: "Frontend", proficiency: 95, order: 1 },
+  { _id: "s2", name: "Next.js", category: "Frontend", proficiency: 93, order: 2 },
   { _id: "s3", name: "TypeScript", category: "Frontend", proficiency: 90, order: 3 },
-  { _id: "s4", name: "JavaScript", category: "Frontend", proficiency: 93, order: 4 },
-  { _id: "s5", name: "Tailwind CSS", category: "Frontend", proficiency: 90, order: 5 },
-  { _id: "s6", name: "HTML / CSS", category: "Frontend", proficiency: 95, order: 6 },
-  { _id: "s7", name: "Node.js", category: "Backend", proficiency: 90, order: 1 },
-  { _id: "s8", name: "Express", category: "Backend", proficiency: 88, order: 2 },
-  { _id: "s9", name: "REST APIs", category: "Backend", proficiency: 92, order: 3 },
-  { _id: "s10", name: "PHP", category: "Backend", proficiency: 75, order: 4 },
-  { _id: "s11", name: "MongoDB", category: "Database", proficiency: 90, order: 1 },
-  { _id: "s12", name: "PostgreSQL", category: "Database", proficiency: 85, order: 2 },
-  { _id: "s13", name: "MySQL", category: "Database", proficiency: 80, order: 3 },
-  { _id: "s14", name: "Git & GitHub", category: "Tools", proficiency: 92, order: 1 },
-  { _id: "s15", name: "Vercel", category: "Tools", proficiency: 88, order: 2 },
-  { _id: "s16", name: "Postman", category: "Tools", proficiency: 90, order: 3 },
+  { _id: "s4", name: "Tailwind CSS", category: "Frontend", proficiency: 92, order: 4 },
+
+  // Backend (4)
+  { _id: "s5", name: "Node.js", category: "Backend", proficiency: 92, order: 1 },
+  { _id: "s6", name: "Express.js", category: "Backend", proficiency: 90, order: 2 },
+  { _id: "s7", name: "REST APIs", category: "Backend", proficiency: 94, order: 3 },
+  { _id: "s8", name: "Redis", category: "Backend", proficiency: 86, order: 4 },
+
+  // Database (4)
+  { _id: "s9", name: "PostgreSQL", category: "Database", proficiency: 90, order: 1 },
+  { _id: "s10", name: "MongoDB", category: "Database", proficiency: 92, order: 2 },
+  { _id: "s11", name: "MySQL", category: "Database", proficiency: 86, order: 3 },
+  { _id: "s12", name: "SQL & Modeling", category: "Database", proficiency: 88, order: 4 },
+
+  // DevOps & Cloud (4)
+  { _id: "s13", name: "DigitalOcean", category: "DevOps & Cloud", proficiency: 88, order: 1 },
+  { _id: "s14", name: "Railway", category: "DevOps & Cloud", proficiency: 88, order: 2 },
+  { _id: "s15", name: "Cloudflare & R2", category: "DevOps & Cloud", proficiency: 86, order: 3 },
+  { _id: "s16", name: "Git & GitHub", category: "DevOps & Cloud", proficiency: 92, order: 4 },
 ];
 
-// Blog posts and testimonials aren't shown on the site, but the admin panel still
-// manages those collections. Keep the arrays so its API keeps working.
 export const fallbackBlogs: unknown[] = [];
 export const fallbackTestimonials: unknown[] = [];
 
-// Add real roles here — the Experience section stays hidden while this is empty.
-export const fallbackExperiences: {
-  _id: string;
-  company: string;
-  position: string;
-  description: string;
-  startDate: string;
-  endDate?: string;
-  current: boolean;
-  technologies: string[];
-  order: number;
-}[] = [];
-
-export const fallbackEducation: {
-  _id: string;
-  institution: string;
-  degree: string;
-  field: string;
-  startYear: string;
-  endYear?: string;
-  current: boolean;
-  grade?: string;
-  description?: string;
-  order: number;
-}[] = [
+export const fallbackExperiences = [
   {
-    _id: "btech",
-    institution: "B.Tech",
-    degree: "B.Tech",
+    _id: "exp-hkm",
+    company: "Hare Krishna Movement, Visakhapatnam",
+    position: "Full Stack Developer",
+    description:
+      "Own and scale primary production platforms: main website raising ₹95L+ from 12,000+ donors with Redis handling for 2L+ peak-day visitors; independent HKM Careers recruitment portal with resume intake and SMTP automated hiring workflows; PostgreSQL-backed DRM tele-calling CRM managing 20,000+ records with companion Android dialer app; and DigitalOcean/Railway deployment.",
+    startDate: "Jul 2026",
+    endDate: "Oct 2026",
+    current: true,
+    technologies: [
+      "React.js",
+      "Next.js",
+      "Node.js",
+      "PostgreSQL",
+      "MongoDB",
+      "Redis",
+      "Razorpay",
+      "DigitalOcean",
+      "Railway",
+      "SMTP",
+      "REST APIs",
+    ],
+    order: 1,
+  },
+  {
+    _id: "exp-makonis",
+    company: "Makonis AI Solutions Pvt. Ltd., Hyderabad",
+    position: "Full Stack Development Intern",
+    description:
+      "Developed and optimized responsive web pages using React.js, JavaScript, HTML5, and CSS3. Built reusable UI components, integrated frontends with backend REST APIs, and collaborated on website redesign and performance optimization using Git.",
+    startDate: "May 2025",
+    endDate: "Jul 2025",
+    current: false,
+    technologies: [
+      "React.js",
+      "JavaScript",
+      "HTML5",
+      "CSS3",
+      "Node.js",
+      "REST APIs",
+      "Git",
+    ],
+    order: 2,
+  },
+];
+
+export const fallbackEducation = [
+  {
+    _id: "btech-gvp",
+    institution: "Gayatri Vidya Parishad College for Degree & P.G. Courses (A)",
+    degree: "B.Tech in Computer Science and Engineering",
     field: "Computer Science & Engineering",
     startYear: "2022",
     endYear: "2026",
     current: false,
-    grade: "",
-    description: "",
+    grade: "Undergraduate",
+    description:
+      "Core coursework: Data Structures & Algorithms, OOP, Database Management Systems, MERN Architecture, and Generative AI.",
     order: 1,
   },
 ];

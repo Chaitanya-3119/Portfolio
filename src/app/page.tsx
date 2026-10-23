@@ -79,7 +79,13 @@ export default async function Home() {
       <main id="main" className="relative z-[1]">
         <Hero profile={data.profile} projects={data.projects} />
         <Projects projects={data.projects} />
-        <About profile={data.profile} projectCount={data.projects.length} />
+        <About
+          profile={data.profile}
+          projectCount={
+            data.projects.filter((p: { featured?: boolean }) => p.featured)
+              .length || 4
+          }
+        />
         <Stack skills={data.skills} />
         <Experience
           experiences={data.experiences}

@@ -9,6 +9,7 @@ import {
   Blog,
   Testimonial,
   Profile,
+  Contact,
 } from "@/lib/models";
 import { verifyAuth } from "@/lib/auth";
 import {
@@ -33,6 +34,7 @@ const models = {
   blogs: Blog,
   testimonials: Testimonial,
   profile: Profile,
+  messages: Contact,
 } as unknown as Record<string, CollectionModel>;
 
 const fallbackDataMap: Record<string, unknown> = {
@@ -43,6 +45,7 @@ const fallbackDataMap: Record<string, unknown> = {
   blogs: fallbackBlogs,
   testimonials: fallbackTestimonials,
   profile: fallbackProfile,
+  messages: [],
 };
 
 // GET all items for a collection
@@ -71,7 +74,11 @@ export async function GET(
 
   try {
     await dbConnect();
-    const items = await Model.find().sort({ order: 1, createdAt: -1 }).lean();
+    const sortConfig: Record<string, 1 | -1> =
+      collection === "messages"
+        ? { createdAt: -1 }
+        : { order: 1, createdAt: -1 };
+    const items = await Model.find().sort(sortConfig).lean();
     return NextResponse.json(items);
   } catch (error) {
     console.error("Fetch error:", error);

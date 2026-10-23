@@ -22,15 +22,18 @@ import {
 } from "@/lib/fallback-data";
 
 // Seed admin user and initial portfolio data
-export async function POST() {
+export async function POST(req?: Request) {
   try {
     await dbConnect();
+
+    const url = req ? new URL(req.url) : null;
+    const shouldRefresh = url?.searchParams.get("sync") === "true";
 
     // 1. Seed Admin
     let adminCreated = false;
     const existingAdmin = await Admin.findOne();
     if (!existingAdmin) {
-      const email = process.env.ADMIN_EMAIL || "admin@chaitanya.dev";
+      const email = process.env.ADMIN_EMAIL || "chaitanya7101@gmail.com";
       const password = process.env.ADMIN_PASSWORD || "changeme123";
       const hashedPassword = await bcrypt.hash(password, 12);
 
@@ -40,9 +43,13 @@ export async function POST() {
         name: "Chaitanya",
       });
       adminCreated = true;
+    } else if (existingAdmin.email === "admin@chaitanya.dev") {
+      const email = process.env.ADMIN_EMAIL || "chaitanya7101@gmail.com";
+      existingAdmin.email = email;
+      await existingAdmin.save();
     }
 
-    // 2. Seed Profile
+    // 2. Seed / Update Profile
     const existingProfile = await Profile.findOne();
     if (!existingProfile) {
       await Profile.create({
@@ -55,60 +62,96 @@ export async function POST() {
           githubStars: 15,
         },
       });
+    } else if (shouldRefresh) {
+      await Profile.findByIdAndUpdate(existingProfile._id, {
+        $set: {
+          tagline: fallbackProfile.tagline,
+          bio: fallbackProfile.bio,
+          location: fallbackProfile.location,
+          email: existingProfile.email || fallbackProfile.email,
+          phone: fallbackProfile.phone,
+          socialLinks: {
+            ...fallbackProfile.socialLinks,
+            ...existingProfile.socialLinks,
+            linkedin: existingProfile.socialLinks?.linkedin || fallbackProfile.socialLinks.linkedin,
+            github: existingProfile.socialLinks?.github || fallbackProfile.socialLinks.github,
+          },
+        },
+      });
+      // Clean up legacy placeholder education
+      await Education.deleteMany({ institution: "B.Tech" });
     }
 
-    // 3. Seed Projects
-    if ((await Project.countDocuments()) === 0) {
-      const projectsToInsert = fallbackProjects.map((p, idx) => {
+    // 3. Seed / Upsert Projects
+    const projectCount = await Project.countDocuments();
+    if (projectCount === 0 || shouldRefresh) {
+      for (const p of fallbackProjects) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { _id, ...rest } = p;
-        return {
-          ...rest,
-          image: p.image || `/projects/project${(idx % 3) + 1}.jpg`,
-          screenshots: p.screenshots ?? [],
-        };
-      });
-      await Project.insertMany(projectsToInsert);
-    }
-
-    // 4. Seed Skills
-    if ((await Skill.countDocuments()) === 0) {
-      const skillsToInsert = fallbackSkills.map((s) => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { _id, ...rest } = s;
-        return {
-          icon: "⚡",
-          ...rest,
-        };
-      });
-      await Skill.insertMany(skillsToInsert);
-    }
-
-    // 5. Seed Experience
-    if ((await Experience.countDocuments()) === 0) {
-      const expToInsert = fallbackExperiences.map((e) => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { _id, ...rest } = e;
-        return rest;
-      });
-      if (expToInsert.length > 0) {
-        await Experience.insertMany(expToInsert);
+        const { _id, image, screenshots, ...rest } = p;
+        await Project.findOneAndUpdate(
+          { slug: p.slug },
+          {
+            $set: rest,
+            $setOnInsert: {
+              image: image || "",
+              screenshots: screenshots ?? [],
+            },
+          },
+          { upsert: true, new: true }
+        );
       }
     }
 
-    // 6. Seed Education
-    if ((await Education.countDocuments()) === 0) {
-      const eduToInsert = fallbackEducation.map((e) => {
+    // 4. Seed / Upsert Skills
+    const skillCount = await Skill.countDocuments();
+    if (skillCount === 0 || shouldRefresh) {
+      if (shouldRefresh) {
+        // Remove skills that are no longer in fallbackSkills
+        await Skill.deleteMany({
+          name: { $nin: fallbackSkills.map((s) => s.name) },
+        });
+      }
+      for (const s of fallbackSkills) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { _id, ...rest } = e;
-        return {
-          ...rest,
-          institution: e.institution && e.institution.trim() !== "" ? e.institution : "B.Tech University",
-          startYear: e.startYear && e.startYear.trim() !== "" ? e.startYear : "2022",
-        };
-      });
-      if (eduToInsert.length > 0) {
-        await Education.insertMany(eduToInsert);
+        const { _id, ...rest } = s;
+        await Skill.findOneAndUpdate(
+          { name: s.name },
+          {
+            $set: {
+              icon: "⚡",
+              ...rest,
+            },
+          },
+          { upsert: true, new: true }
+        );
+      }
+    }
+
+    // 5. Seed / Upsert Experience
+    const expCount = await Experience.countDocuments();
+    if (expCount === 0 || shouldRefresh) {
+      for (const exp of fallbackExperiences) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { _id, ...rest } = exp;
+        await Experience.findOneAndUpdate(
+          { company: exp.company },
+          { $set: rest },
+          { upsert: true, new: true }
+        );
+      }
+    }
+
+    // 6. Seed / Upsert Education
+    const eduCount = await Education.countDocuments();
+    if (eduCount === 0 || shouldRefresh) {
+      for (const edu of fallbackEducation) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { _id, ...rest } = edu;
+        await Education.findOneAndUpdate(
+          { institution: edu.institution },
+          { $set: rest },
+          { upsert: true, new: true }
+        );
       }
     }
 

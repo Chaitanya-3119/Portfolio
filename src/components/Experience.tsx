@@ -136,6 +136,15 @@ export default function Experience({
                         </p>
                       )}
 
+                      {edu.institution && (
+                        <p
+                          className="mt-2 text-[0.92rem] font-medium"
+                          style={{ color: "var(--color-accent)" }}
+                        >
+                          {edu.institution}
+                        </p>
+                      )}
+
                       {(edu.startYear || edu.endYear || edu.grade) && (
                         <div className="mt-7 flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
                           {(edu.startYear || edu.endYear) && (

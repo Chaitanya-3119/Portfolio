@@ -96,7 +96,19 @@ function ProjectMedia({ project }: { project: ProjectItem }) {
 export default function Projects({ projects }: { projects: ProjectItem[] }) {
   if (projects.length === 0) return null;
 
-  const sorted = [...projects].sort((a, b) => a.order - b.order);
+  const priority = [
+    "harekrishnavizag",
+    "makonissoft",
+    "careers",
+    "donor-care-cell",
+  ];
+  const rank = (project: ProjectItem) => {
+    const index = priority.indexOf(project.slug);
+    return index === -1 ? priority.length : index;
+  };
+  const sorted = [...projects].sort(
+    (a, b) => rank(a) - rank(b) || a.order - b.order
+  );
   const featured = sorted.filter((p) => p.featured);
   const rest = sorted.filter((p) => !p.featured);
   const primary = featured.length > 0 ? featured : sorted;

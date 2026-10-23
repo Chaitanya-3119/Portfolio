@@ -11,7 +11,7 @@ Edit **`src/lib/fallback-data.ts`**.
 | Field | Current | Action |
 | --- | --- | --- |
 | `name` | Dasari Chaitanya | Confirm how you want to be credited |
-| `email` | chaitanya7101@gmail.com | Confirm this is the address you want public |
+| `email` | chaitanya9work@gmail.com | Confirm this is the address you want public |
 | `location` | India | Tighten to a city if you want |
 | `socialLinks.linkedin` | empty | Add your LinkedIn URL |
 | `socialLinks.twitter` | empty | Add X/Twitter, or leave empty (link hides) |

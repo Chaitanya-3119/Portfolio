@@ -30,9 +30,16 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  const cleanEmail =
+    user.email && !user.email.toLowerCase().endsWith("@chaitanya.dev")
+      ? user.email
+      : process.env.NOTIFICATION_EMAIL?.split(",")[0]?.trim() ||
+        process.env.SMTP_USER ||
+        "chaitanya7101@gmail.com";
+
   const testPayload = {
     name: user.name || "Portfolio Admin",
-    email: user.email || "admin@portfolio.local",
+    email: cleanEmail,
     subject: "Test Notification",
     message:
       "This is a test notification from your Portfolio Dashboard! Your notification channel is working perfectly.",
